@@ -1,20 +1,24 @@
-const { app, BrowserWindow } = require('electron')
-const { createMenu } = require('./menu.js');
+const { app } = require('electron')
+const EventEmitter = require('node:events');
 
-const createWindow = () => {
-    const mainWindow = new BrowserWindow({
-        titleBarStyle: 'hidden',
-    })
-    createMenu(mainWindow);
-    mainWindow.loadFile('index.html');
-}
+const { createMainWindow } = require('./src/core/window')
+
+const eventEmitter = new EventEmitter();
 
 app.whenReady().then(() => {
-    createWindow();
+    createMainWindow(eventEmitter);
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow()
     })
-})
+});
+
+eventEmitter.on('menu:file:open_folder', (dirPath) => {
+    console.log(dirPath);
+});
+
+eventEmitter.on('menu:file:open_folder:error', (error) => {
+    console.error(error);
+});
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit()
