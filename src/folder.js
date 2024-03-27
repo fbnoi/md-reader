@@ -23,7 +23,7 @@ module.exports.readAllMDFiles = function (dir) {
         let fullPath = path.join(dir, item);
         let stat = fs.lstatSync(fullPath);
         if (!stat.isDirectory()) {
-            
+            console.log(item);
         }
     });
 }

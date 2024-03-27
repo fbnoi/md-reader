@@ -6,7 +6,7 @@ const createWindow = () => {
         titleBarStyle: 'hidden',
     })
     createMenu(mainWindow);
-    mainWindow.loadFile('index.html')
+    mainWindow.loadFile('index.html');
 }
 
 app.whenReady().then(() => {

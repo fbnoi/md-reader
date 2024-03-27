@@ -4,10 +4,10 @@
   "description": "markdown viewer",
   "main": "main.js",
   "repository": "https://github.com/fbnoi/md-reader.git",
-  "author": "浪 <fbnoi@foxmail.com>",
+  "author": "Lang Liu <fbnoi@foxmail.com>",
   "license": "Apache-2.0",
   "dependencies": {
-    "electron": "^10.1.5"
+    "electron": "^28.2.8"
   },
   "scripts": {
     "start": "electron ."

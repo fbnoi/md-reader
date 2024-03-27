@@ -18,8 +18,14 @@ module.exports.createMenu = function (win) {
                             });
                     }
                 },
+                {
+                    label: 'Debug',
+                    click: () => {
+                        win.webContents.openDevTools();
+                    }
+                }
             ]
-        },
+        }
     ];
     const menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
