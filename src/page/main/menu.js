@@ -8,13 +8,10 @@ const createMenu = function (eventEmitter) {
                 {
                     label: 'Open Folder...',
                     click: () => {
-                        dialog.showOpenDialogSync({
-                            properties: ['openDirectory']
-                        }).then(res => {
-                            if (!res.canceled) {
-                                eventEmitter.emit('menu:file:open_folder', res.filePaths);
-                            }
-                        });
+                        let dirs = dialog.showOpenDialogSync({properties: ['openDirectory']});
+                        if (dirs !== undefined) {
+                            eventEmitter.emit('menu:file:open_folder', dirs[0]);
+                        }
                     }
                 },
                 {

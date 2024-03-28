@@ -7,7 +7,10 @@
   "author": "Lang Liu <fbnoi@foxmail.com>",
   "license": "Apache-2.0",
   "dependencies": {
-    "electron": "^28.2.8"
+    "@popperjs/core": "^2.11.8",
+    "bootstrap": "^5.3.3",
+    "electron": "^28.2.8",
+    "fast-xml-parser": "^4.3.6"
   },
   "scripts": {
     "start": "electron ."
