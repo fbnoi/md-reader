@@ -1,38 +1,45 @@
-const { app } = require('electron');
-const { createMainWindow, createFolderWindow } = require('./src/core/window');
-const EventEmitter = require('node:events');
-const fs = require('fs');
+const { app, BrowserWindow, Menu } = require('electron');
+const { loadMainPage, loadFilePage } = require('./page');
+const { createMenu } = require('./menu');
+const { listen } = require('./bus');
+const { registerAPI } = require('./api');
 
-const eventEmitter = new EventEmitter();
-let win = null;
+const path = require('node:path');
+
+const DEFAULT_WIN_WIDTH = 1200;
+const DEFAULT_WIN_HEIGHT = 900;
+
+const createMainWindow = function () {
+    const win = new BrowserWindow({
+        width: DEFAULT_WIN_WIDTH,
+        height: DEFAULT_WIN_HEIGHT,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+            contextIsolation: true,
+            nodeIntegration: false,
+            enableRemoteModule: false,
+            webSecurity: true
+        }
+    })
+    const menu = createMenu();
+    Menu.setApplicationMenu(menu);
+
+    return win;
+}
 
 app.whenReady().then(() => {
     const args = process.argv.slice(2);
-    // if (args.length > 0) {
-    //     let localPath = args[0];
-    //     if (fs.stat(localPath)) {
-
-    //     }
-    // }
-
-    win = createMainWindow(eventEmitter);
+    const win = createMainWindow();
     app.on('activate', () => {
-        if (BrowserWindow.getAllWindows().length === 0) createMainWindow(eventEmitter);
+        if (BrowserWindow.getAllWindows().length === 0) createMainWindow();
     });
-});
-
-eventEmitter.on('menu:file:open_folder', (dirPath) => {
-    let newWin = createFolderWindow(eventEmitter, dirPath);
-    win.close();
-    win = newWin;
-});
-
-eventEmitter.on('menu:file:open_folder:error', (error) => {
-    console.error(error);
-});
-
-eventEmitter.on('menu:file:debug', (error) => {
-    win.webContents.openDevTools();
+    listen(win);
+    registerAPI();
+    if (args.length === 0) {
+        loadMainPage(win);
+    } else {
+        loadFilePage(win, args[0]);
+    }
 });
 
 app.on('window-all-closed', () => {
