@@ -3,7 +3,6 @@ const path = require('node:path');
 const { ipcMain } = require('electron');
 
 const openFile = (filePath) => {
-    console.log(filePath);
     const fInfo = fs.statSync(filePath);
     if (fInfo.isFile()) {
         return {

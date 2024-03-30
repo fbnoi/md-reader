@@ -1,7 +1,13 @@
-const urlParams = new URLSearchParams(window.location.search);
-const filePath = urlParams.get('filePath');
-console.log(filePath);
-const fileInfo = window.API.openFile(filePath);
-fileInfo.then((res) => {
-    console.log(res);
+document.addEventListener('DOMContentLoaded', function () {
+    new Promise((resolve) => {
+        const urlParams = new URLSearchParams(window.location.search)
+        const filePath = urlParams.get('filePath')
+        resolve(filePath)
+    }).then((filePath) => {
+        return window.API.openFile(filePath)
+    }).then((fileInfo) => {
+        console.log(fileInfo);
+        document.title = fileInfo.filename;
+        document.querySelector('.main-view').innerHTML = marked.parse(fileInfo.content);
+    });
 });
