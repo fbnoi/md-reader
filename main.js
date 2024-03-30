@@ -1,8 +1,8 @@
 const { app, BrowserWindow, Menu } = require('electron');
-const { loadMainPage, loadFilePage } = require('./page');
-const { createMenu } = require('./menu');
-const { listen } = require('./bus');
-const { registerAPI } = require('./api');
+const { loadMainPage, loadFilePage } = require('./src/core/page');
+const { createMenu } = require('./src/core/menu');
+const { listen } = require('./src/core/bus');
+const { registerAPI } = require('./src/core/api');
 
 const path = require('node:path');
 
@@ -14,7 +14,7 @@ const createMainWindow = function () {
         width: DEFAULT_WIN_WIDTH,
         height: DEFAULT_WIN_HEIGHT,
         webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
+            preload: path.join(__dirname, 'src/core', 'preload.js'),
             contextIsolation: true,
             nodeIntegration: false,
             enableRemoteModule: false,
@@ -40,6 +40,7 @@ app.whenReady().then(() => {
     } else {
         loadFilePage(win, args[0]);
     }
+    win.webContents.openDevTools();
 });
 
 app.on('window-all-closed', () => {

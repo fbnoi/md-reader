@@ -1,11 +1,11 @@
 const path = require('path');
 
 const loadPage = (win, name, query) => {
-    return win.loadFile(path.join(__dirname, 'src/page', name, 'index.html'), { query: query });
+    return win.loadFile(path.join(__dirname, '../public/page', name + '.html'), { query: query });
 }
 
 const loadMainPage = (win) => {
-    return loadPage(win, 'main', null);
+    return loadPage(win, 'index', null);
 }
 
 const loadFilePage = (win, filePath) => {
