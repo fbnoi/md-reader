@@ -7,7 +7,7 @@ body .container {
     border-top: 1px solid #eee;
     height: calc(100% - 1px);
     display: grid;
-    grid-template-columns: 100px 2px 1fr;
+    grid-template-columns: 360px 2px 1fr;
 }
 
 .container .side-view {
