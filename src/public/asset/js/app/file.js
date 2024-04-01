@@ -1,21 +1,24 @@
 document.addEventListener('DOMContentLoaded', function () {
     new Promise((resolve) => {
-        const urlParams = new URLSearchParams(window.location.search)
-        const filePath = urlParams.get('filePath')
-        resolve(filePath)
+        Split({
+            columnGutters: [{
+                track: 1,
+                element: document.querySelector('.gutter-main'),
+            }],
+            rowGutters: [{
+                track: 1,
+                element: document.querySelector('.gutter-side'),
+            }]
+        });
+        resolve();
+    }).then(() => {
+        return new URLSearchParams(window.location.search).get('filePath');
     }).then((filePath) => {
-        return window.API.openFile(filePath)
+        return window.API.openFile(filePath);
     }).then((fileInfo) => {
         document.title = fileInfo.filename;
-        const mdHljs = markedHighlight.markedHighlight({
-            langPrefix: 'hljs language-',
-            highlight(code, lang, info) {
-                const language = hljs.getLanguage(lang) ? lang : 'plaintext';
-
-                return hljs.highlight(code, { language }).value;
-            }
-        });
-        marked.use(mdHljs);
-        document.querySelector('.main-view').innerHTML = marked.parse(fileInfo.content);
-    });
+        myMarked.parse(fileInfo.content);
+        document.querySelector('.main-view').innerHTML = myMarked.getContent();
+        document.querySelector('.side-view').innerHTML = myMarked.getToc();
+    })
 });

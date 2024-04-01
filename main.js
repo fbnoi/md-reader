@@ -6,8 +6,8 @@ const { registerAPI } = require('./src/core/api');
 
 const path = require('node:path');
 
-const DEFAULT_WIN_WIDTH = 1200;
-const DEFAULT_WIN_HEIGHT = 900;
+const DEFAULT_WIN_WIDTH = 1028;
+const DEFAULT_WIN_HEIGHT = 680;
 
 const createMainWindow = function () {
     const win = new BrowserWindow({
