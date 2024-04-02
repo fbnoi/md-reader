@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }).then((fileInfo) => {
         document.title = fileInfo.filename;
         myMarked.parse(fileInfo.content);
-        document.querySelector('.main-view').innerHTML = myMarked.getContent();
-        document.querySelector('.side-view').innerHTML = myMarked.getToc();
+        document.querySelector('.article').innerHTML = myMarked.getContent();
+        document.querySelector('.category').innerHTML = myMarked.getToc();
     })
 });

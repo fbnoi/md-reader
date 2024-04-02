@@ -6,6 +6,7 @@
 	'use strict';
 	let content = '';
 	let toc = '';
+	const env = nunjucks.configure('../template', { autoescape: true });
 
 	function parse(markdown) {
 		const mdHljs = markedHighlight.markedHighlight({
@@ -31,16 +32,7 @@
 	}
 
 	const parseToc = (headers) => {
-		let toc = '<div class="toc">';
-		headers.forEach(element => {
-			toc += `<div class="toc-${element.level}">`;
-			toc += `<a class="toc-${element.level}-link" href="#${element.id}">`;
-			toc += element.text;
-			toc += '</a></div>';
-		});
-		toc += '</div>';
-
-		return toc;
+		return nunjucks.render('toc.html.njk', {'items': headers});
 	}
 
 	exports.parse = parse;
