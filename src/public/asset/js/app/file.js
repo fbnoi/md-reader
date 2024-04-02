@@ -4,10 +4,6 @@ document.addEventListener('DOMContentLoaded', function () {
             columnGutters: [{
                 track: 1,
                 element: document.querySelector('.gutter-main'),
-            }],
-            rowGutters: [{
-                track: 1,
-                element: document.querySelector('.gutter-side'),
             }]
         });
         resolve();
