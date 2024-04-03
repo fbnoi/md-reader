@@ -1,6 +1,5 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const dirTree = require('directory-tree');
 const { ipcMain } = require('electron');
 
 const { dree, dreeType } = require('./dree');
@@ -17,10 +16,6 @@ const openFile = (filePath) => {
     }
 
     return null;
-}
-
-const openDir = (filePath) => {
-    return dirTree(filePath, { extensions: /\.(md|markdown)/ });
 }
 
 const registerAPI = () => {

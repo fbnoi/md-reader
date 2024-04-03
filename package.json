@@ -9,7 +9,6 @@
   "dependencies": {
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.3",
-    "directory-tree": "^3.5.1",
     "electron": "^28.2.8",
     "fast-xml-parser": "^4.3.6"
   },

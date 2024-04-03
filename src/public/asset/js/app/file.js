@@ -13,8 +13,9 @@ document.addEventListener('DOMContentLoaded', function () {
         return window.API.openFile(filePath);
     }).then((fileInfo) => {
         document.title = fileInfo.name;
-        myMarked.parse(fileInfo.content);
-        document.querySelector('.article').innerHTML = myMarked.getContent();
-        document.querySelector('.category').innerHTML = myMarked.getToc();
+        console.log(render);
+        const markdown = render.markdown(fileInfo.content);
+        document.querySelector('.article').innerHTML = markdown.content;
+        document.querySelector('.category').innerHTML = markdown.toc;
     })
 });
