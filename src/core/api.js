@@ -3,14 +3,16 @@ const path = require('node:path');
 const dirTree = require('directory-tree');
 const { ipcMain } = require('electron');
 
+const { dree, dreeType } = require('./dree');
+
 const openFile = (filePath) => {
     const fInfo = fs.statSync(filePath);
     if (fInfo.isFile()) {
         return {
-            filename: path.basename(filePath),
-            mtime: fInfo.mtimeMs,
-            size: fInfo.size,
-            content: fs.readFileSync(filePath, { encoding: "UTF-8" })
+            name: path.basename(filePath),
+            path: filePath,
+            type: dreeType.TYPE_FILE,
+            content: fs.readFileSync(filePath, { encoding: "UTF-8" }),
         };
     }
 
@@ -26,7 +28,7 @@ const registerAPI = () => {
         return openFile(filePath);
     });
     ipcMain.handle('api:openDir', (event, dirPath) => {
-        return openDir(dirPath);
+        return dree(dirPath);
     });
 }
 

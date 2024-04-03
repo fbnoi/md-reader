@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }).then((filePath) => {
         return window.API.openFile(filePath);
     }).then((fileInfo) => {
-        document.title = fileInfo.filename;
+        document.title = fileInfo.name;
         myMarked.parse(fileInfo.content);
         document.querySelector('.article').innerHTML = myMarked.getContent();
         document.querySelector('.category').innerHTML = myMarked.getToc();
