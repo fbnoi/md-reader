@@ -1,6 +1,6 @@
 const marked = require('marked');
-const renderer = require('./renderer');
-const toc = require('./toc');
+const renderer = require('../marked/renderer');
+const toc = require('../marked/toc');
 const doc = {
     html: null,
     toc: null,
