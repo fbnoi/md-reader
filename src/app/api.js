@@ -3,7 +3,7 @@ const path = require('node:path');
 const markdown = require('../lib/marked/markdown');
 
 const { ipcMain } = require('electron');
-const { dree, dreeType } = require('./dree');
+const { dree, dreeType } = require('../lib/core/dree');
 
 
 const openFile = (filePath) => {

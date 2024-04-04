@@ -1,4 +1,4 @@
-const { loadFilePage, loadFolderPage } = require('./page');
+const { loadFilePage, loadFolderPage } = require('../lib/core/page');
 
 const EventEmitter = require('node:events');
 const eventEmitter = new EventEmitter();
