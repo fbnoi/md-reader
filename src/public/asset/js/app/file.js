@@ -12,10 +12,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }).then((filePath) => {
         return window.API.openFile(filePath);
     }).then((fileInfo) => {
+        console.log(fileInfo);
         document.title = fileInfo.name;
-        console.log(render);
-        const markdown = render.markdown(fileInfo.content);
-        document.querySelector('.article').innerHTML = markdown.content;
-        document.querySelector('.category').innerHTML = markdown.toc;
+        document.querySelector('.article').innerHTML = fileInfo.doc.html;
+        document.querySelector('.category').innerHTML = fileInfo.doc.toc;
     })
 });

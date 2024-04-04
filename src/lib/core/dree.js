@@ -9,10 +9,9 @@ const defaultOptions = {
     sortOrder: 'asc'
 };
 
-const dreeType = {TYPE_DIR: 1, TYPE_FILE: 2};
+const dreeType = { TYPE_DIR: 1, TYPE_FILE: 2 };
 
 const dree = (dir, options = null) => {
-
     const getSortValue = (node) => {
         if (typeof options.sortKey == 'string' && node.hasOwnProperty(options.sortKey)) {
             return node[options.sortKey];
@@ -88,10 +87,10 @@ const dree = (dir, options = null) => {
             let stat = fs.statSync(pathname);
             if (stat.isFile()) {
                 if (!options.extensions || options.extensions.test(file)) {
-                    tree.children.push({name: file, path: pathname, type: dreeType.TYPE_FILE});
+                    tree.children.push({ name: file, path: pathname, type: dreeType.TYPE_FILE });
                 }
             } else if (stat.isDirectory() && !options.exclude || !options.exclude.test(file)) {
-                const dirTree = {name: file, path: pathname, children: [], type: dreeType.TYPE_DIR}
+                const dirTree = { name: file, path: pathname, children: [], type: dreeType.TYPE_DIR }
                 readDirWithCallback(pathname, dirTree);
                 if (options.reserveEmptyDir || dirTree.children.length != 0) {
                     sortChildren(dirTree);
@@ -117,15 +116,14 @@ const dree = (dir, options = null) => {
         validateOptions();
     }
     const root = {
-        name: path.basename(dir), 
-        path: dir, 
-        children: [], 
-        type: dreeType.TYPE_DIR, 
+        name: path.basename(dir),
+        path: dir,
+        children: [],
+        type: dreeType.TYPE_DIR,
     };
     readDirWithCallback(dir, root);
 
     return root;
 }
 
-exports.dree = dree;
-exports.dreeType = dreeType;
+module.exports = { dree, dreeType }

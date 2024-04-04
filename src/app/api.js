@@ -1,8 +1,10 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const { ipcMain } = require('electron');
+const markdown = require('../lib/marked/markdown');
 
+const { ipcMain } = require('electron');
 const { dree, dreeType } = require('./dree');
+
 
 const openFile = (filePath) => {
     const fInfo = fs.statSync(filePath);
@@ -11,7 +13,7 @@ const openFile = (filePath) => {
             name: path.basename(filePath),
             path: filePath,
             type: dreeType.TYPE_FILE,
-            content: fs.readFileSync(filePath, { encoding: "UTF-8" }),
+            doc: markdown.makeHtml(fs.readFileSync(filePath, { encoding: "UTF-8" }))
         };
     }
 
@@ -23,7 +25,7 @@ const registerAPI = () => {
         return openFile(filePath);
     });
     ipcMain.handle('api:openDir', (event, dirPath) => {
-        return dree(dirPath);
+        return render.fileTree(dree(dirPath));
     });
 }
 

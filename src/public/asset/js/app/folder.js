@@ -15,9 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return new URLSearchParams(window.location.search).get('dirPath');
     }).then((dirPath) => {
         return window.API.openDir(dirPath);
-    }).then((tree) => {
-        const html = render.fileTree(tree);
+    }).then((html) => {
         document.querySelector('.file-tree').innerHTML = html;
-        return 
     });
 });

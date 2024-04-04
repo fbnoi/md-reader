@@ -1,0 +1,25 @@
+{% macro tree(root, expanded = false) %}
+<div class="collapse" id="collapseExample">
+    <div class="collapse-togggle {% if expanded %}collapse-togggle-expanded{% endif %}"
+        data-collapse-togggle-target="#collapseExample">
+        <span class="" data-filepath="{{ root.path }}">{{ root.name }}</span>
+    </div>
+    <div class="collapse-container {% if expanded %}collapse-container-show{% endif %}">
+        <ul class="list-group">
+            {% for node in root.children %}
+            <li>
+                {% if 1 == node.type %}
+                <span class="" data-filepath="{{ node.path }}">{{ node.name }}</span>
+                {% else %}
+                {{ tree(node) }}
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endmacro %}
+
+<div class="dir-tree">
+    {{ tree(root) }}
+</div>
