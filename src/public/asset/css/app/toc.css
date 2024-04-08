@@ -22,7 +22,7 @@
 
 .category ul > li > a {
     text-decoration: none;
-    display: inline-block;
+    display: list-item;
     text-overflow: ellipsis;
     overflow: hidden;
     padding: 2px 0;

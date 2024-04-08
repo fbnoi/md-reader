@@ -112,7 +112,7 @@ const dree = (dir, options = null) => {
         let html = '<ul>';
         tree.forEach(node => {
             html += `<li>`;
-            html += `<a property-path="${node.path}" property-type="${node.type}">${node.name}</a>`
+            html += `<a property-path="${node.path}" property-type="${node.type}" href="#">${node.name}</a>`
             if (node.type === dreeType.TYPE_DIR) {
                 html += render(node.children);
             }
