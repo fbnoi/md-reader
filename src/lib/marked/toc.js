@@ -5,15 +5,19 @@ const { id } = require('./helper');
 const toc = {
     heading(token) {
         if (token.type === 'heading') {
-            addNode(token);
+            addHeading(token);
         }
     },
     getHeadings() {
         return wrapHeading(tree);
     },
+    reset() {
+        cursor = null;
+        tree.length = 0;
+    }
 }
 
-function addNode(token) {
+function addHeading(token) {
     const node = { name: token.text, id: id(token.text), level: token.depth, children: [], parent: null };
     if (cursor == null) {
         tree.push(node);

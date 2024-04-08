@@ -4,6 +4,10 @@ const { createMenu } = require('./src/app/menu');
 const { listen } = require('./src/app/bus');
 const { registerAPI } = require('./src/app/api');
 
+try {
+    require('electron-reloader')(module)
+} catch (_) {}
+
 const path = require('node:path');
 
 const DEFAULT_WIN_WIDTH = 1028;

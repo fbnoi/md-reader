@@ -1,5 +1,14 @@
 body {
     margin: 0;
+    color: #343a40;
+}
+
+body h1, h2, h3, h4, h5, h6 {
+    color: #343a40;
+}
+
+body a {
+    color: inherit;
 }
 
 body .container {
@@ -50,20 +59,7 @@ body .container {
     overflow-y: hidden;
     margin-right: -2px;
     display: grid;
-    grid-template-rows: 1fr 2px 1fr;
-}
-
-.side-view .file-tree {
-    padding: 0 20px;
-    max-height: 100%;
-    overflow-y: auto;
-}
-
-
-.side-view .category {
-    padding: 0 20px;
-    max-height: 100%;
-    overflow-y: auto;
+    grid-template-rows: 1fr 2px 0;
 }
 
 .gutter-side {
@@ -72,31 +68,4 @@ body .container {
     cursor: row-resize;
     grid-column: 1/-1;
     grid-row: 2;
-}
-
-.toc .toc-item {
-    margin-bottom: 7px;
-}
-
-.toc .toc-link {
-    color: #000;
-    text-decoration: none;
-    font-size: 14px;
-    white-space: nowrap;
-}
-
-.toc .toc-item-2 {
-    margin-left: 20px;
-}
-
-.toc .toc-item-3 {
-    margin-left: 40px;
-}
-
-.toc .toc-item-4 {
-    margin-left: 60px;
-}
-
-.toc .toc-item-5 {
-    margin-left: 80px;
 }

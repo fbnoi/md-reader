@@ -28,7 +28,7 @@ const renderer = {
     },
 
     heading(text, level, raw) {
-        return `<h${level} id="#${id(text)}"><a href="#${id(text)}" id="#${id(text + '_link')}">${text}</a></h${level}>\n`;
+        return `<h${level} id="${id(text)}"><a href="#${id(text)}" id="${id(text + '_link')}">${text}</a></h${level}>\n`;
     },
 
     listitem(text, task, checked) {

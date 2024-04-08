@@ -10,8 +10,9 @@ marked.use({ renderer: renderer, walkTokens: toc.heading });
 
 const markdown = {
     makeHtml(markdown) {
+        toc.reset();
         doc.html = marked.parse(markdown);
-        doc.toc = toc.getHeadings()
+        doc.toc = toc.getHeadings();
         return doc;
     },
 
@@ -20,4 +21,4 @@ const markdown = {
     }
 }
 
-module.exports = markdown
+module.exports = markdown;
