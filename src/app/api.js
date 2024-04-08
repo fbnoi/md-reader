@@ -16,29 +16,14 @@ const api = {
     },
     openDir(dirPath) {
         const tree = dree(dirPath);
+
+        return tree;
     }
-}
-
-
-const openFile = (filePath) => {
-    const fInfo = fs.statSync(filePath);
-    if (fInfo.isFile()) {
-        return {
-            name: path.basename(filePath),
-            path: filePath,
-            type: dreeType.TYPE_FILE,
-            doc: markdown.makeHtml(fs.readFileSync(filePath, { encoding: "UTF-8" }))
-        };
-    }
-
-    return null;
 }
 
 const registerAPI = () => {
     ipcMain.handle('api:openFile', (event, filePath) => api.openFile(filePath)),
-        ipcMain.handle('api:openDir', (event, dirPath) => {
-            return render.fileTree(dree(dirPath));
-        });
+    ipcMain.handle('api:openDir', (event, dirPath) => api.openDir(dirPath))
 }
 
 module.exports = { registerAPI };

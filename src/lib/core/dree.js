@@ -89,9 +89,9 @@ const dree = (dir, options = null) => {
                 }
             } else if (stat.isDirectory() && !options.exclude || !options.exclude.test(file)) {
                 const dirTree = { name: file, path: pathname, children: [], type: dreeType.TYPE_DIR }
-                readDir(pathname, dirTree);
+                readDir(pathname, dirTree.children);
                 if (options.reserveEmptyDir || dirTree.children.length != 0) {
-                    sortChildren(dirTree);
+                    sortChildren(dirTree.children);
                     tree.push(dirTree);
                 }
             }
@@ -112,9 +112,9 @@ const dree = (dir, options = null) => {
         let html = '<ul>';
         tree.forEach(node => {
             html += `<li>`;
-            html += `<span path="${node.path}">${node.name}</span>`
-            if (node.children.length !== 0) {
-                html += wrapHeading(node.children);
+            html += `<a property-path="${node.path}" property-type="${node.type}">${node.name}</a>`
+            if (node.type === dreeType.TYPE_DIR) {
+                html += render(node.children);
             }
             html += '</li>';
         });
@@ -140,7 +140,7 @@ const dree = (dir, options = null) => {
 
     readDir(dir, root);
 
-    return root;
+    return render(root);
 }
 
 module.exports = { dree, dreeType }
