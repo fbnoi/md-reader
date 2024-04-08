@@ -1,5 +1,19 @@
 document.addEventListener('DOMContentLoaded', function () {
     let initialed = false;
+    let radio = 0.5;
+    const sideViewElem = document.querySelector('.side-view');
+    const categoryElem = document.querySelector('.side-view .category');
+
+    function splitResize() {
+        sideViewElem.style['grid-template-rows'] = '1fr 5px ' + sideViewElem.clientHeight * radio + 'px';
+        console.log(radio, categoryElem.clientHeight, sideViewElem.clientHeight);
+    }
+
+    function updateRadio() {
+        radio = categoryElem.clientHeight / sideViewElem.clientHeight;
+        console.log(radio, categoryElem.clientHeight, sideViewElem.clientHeight);
+    }
+    
     new Promise((resolve) => {
         Split({
             columnGutters: [{
@@ -9,7 +23,12 @@ document.addEventListener('DOMContentLoaded', function () {
             rowGutters: [{
                 track: 1,
                 element: document.querySelector('.gutter-side'),
-            }]
+            }],
+            onDragEnd: function(direction, track) {
+                if (direction === 'row' && track === 1) {
+                    updateRadio();
+                }
+            }
         });
         resolve();
     }).then(() => {
@@ -28,13 +47,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 }).then((fileInfo) => {
                     document.title = fileInfo.name;
                     document.querySelector('.article').innerHTML = fileInfo.doc.html;
-                    document.querySelector('.category').innerHTML = fileInfo.doc.toc;
+                    categoryElem.innerHTML = fileInfo.doc.toc;
                     if (!initialed) {
                         initialed = true;
-                        document.querySelector('.side-view').style['grid-template-rows'] = "1fr 2px 50%";
+                        splitResize();
                     }
                 });
             })
         });
     });
+
+    window.addEventListener('resize', splitResize);
 });

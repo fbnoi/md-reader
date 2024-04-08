@@ -3,7 +3,12 @@ body {
     color: #343a40;
 }
 
-body h1, h2, h3, h4, h5, h6 {
+body h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     color: #343a40;
 }
 
@@ -15,7 +20,7 @@ body .container {
     border-top: 1px solid #eee;
     height: calc(100vh - 1px);
     display: grid;
-    grid-template-columns: 360px 2px 1fr;
+    grid-template-columns: 360px 5px 1fr;
 }
 
 .gutter {
@@ -57,15 +62,27 @@ body .container {
 .container .side-view {
     height: 100%;
     overflow-y: hidden;
-    margin-right: -2px;
+    margin-right: -5px;
     display: grid;
-    grid-template-rows: 1fr 2px 0;
+    grid-template-rows: 1fr 5px 0;
 }
 
 .gutter-side {
-    border-bottom-width: 2px;
-    border-bottom-style: solid;
+    border-top-width: 2px;
+    border-top-style: solid;
     cursor: row-resize;
     grid-column: 1/-1;
     grid-row: 2;
+}
+
+.stretched-link::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    pointer-events: auto;
+    content: "";
+    background-color: rgba(0, 0, 0, 0);
 }
