@@ -5,7 +5,7 @@ const defaultOptions = {
     exclude: null,
     extensions: /\.md$/,
     reserveEmptyDir: false,
-    sortKey: 'name',
+    sortKey: 'mtimeMs',
     sortOrder: 'asc'
 };
 
@@ -85,7 +85,7 @@ const dree = (dir, options = null) => {
             let stat = fs.statSync(pathname);
             if (stat.isFile()) {
                 if (!options.extensions || options.extensions.test(file)) {
-                    tree.push({ name: file, path: pathname, type: dreeType.TYPE_FILE });
+                    tree.push({ name: file, path: pathname, type: dreeType.TYPE_FILE, ctimeMs: stat.ctimeMs, mtimeMs: stat.mtimeMs });
                 }
             } else if (stat.isDirectory() && !options.exclude || !options.exclude.test(file)) {
                 const dirTree = { name: file, path: pathname, children: [], type: dreeType.TYPE_DIR }
@@ -100,7 +100,6 @@ const dree = (dir, options = null) => {
     }
 
     const debug = (node) => {
-        console.log(node.path);
         if (node.type == dreeType.TYPE_DIR) {
             node.children.forEach(node => {
                 debug(node);

@@ -6,12 +6,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function splitResize() {
         sideViewElem.style['grid-template-rows'] = '1fr 5px ' + sideViewElem.clientHeight * radio + 'px';
-        console.log(radio, categoryElem.clientHeight, sideViewElem.clientHeight);
     }
 
     function updateRadio() {
         radio = categoryElem.clientHeight / sideViewElem.clientHeight;
-        console.log(radio, categoryElem.clientHeight, sideViewElem.clientHeight);
     }
     
     new Promise((resolve) => {
