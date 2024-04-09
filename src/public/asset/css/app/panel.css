@@ -1,0 +1,15 @@
+.panel {
+    position: absolute;  
+    top: 30%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.panel .panel-tool {
+    display: flex;
+    align-items: center;
+}
+
+.panel .panel-tool-item {
+    margin-right: 20px;
+}
