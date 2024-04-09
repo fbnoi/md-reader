@@ -1,8 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
     let initialed = false;
-    let radio = 0.5;
+    let radio = 0;
     const sideViewElem = document.querySelector('.side-view');
     const categoryElem = document.querySelector('.side-view .category');
+    const articleElem = document.querySelector('.main-view .article');
 
     function splitResize() {
         sideViewElem.style['grid-template-rows'] = '1fr 5px ' + sideViewElem.clientHeight * radio + 'px';
@@ -44,10 +45,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     resolve(window.API.openFile(filePath));
                 }).then((fileInfo) => {
                     document.title = fileInfo.name;
-                    document.querySelector('.article').innerHTML = fileInfo.doc.html;
+                    articleElem.innerHTML = fileInfo.doc.html;
+                    articleElem.scrollTop = 0;;
                     categoryElem.innerHTML = fileInfo.doc.toc;
                     if (!initialed) {
                         initialed = true;
+                        radio = 0.5;
                         splitResize();
                     }
                 });
