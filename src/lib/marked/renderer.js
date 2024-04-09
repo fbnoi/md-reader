@@ -90,20 +90,20 @@ const renderer = {
         return out;
     },
 
-    image(href, title, text) {
-        const cleanHref = cleanUrl(href);
-        if (cleanHref === null) {
-            return text;
-        }
-        href = cleanHref;
+    // image(href, title, text) {
+    //     const cleanHref = cleanUrl(href);
+    //     if (cleanHref === null) {
+    //         return text;
+    //     }
+    //     href = cleanHref;
 
-        let out = `<img src="${href}" alt="${text}"`;
-        if (title) {
-            out += ` title="${title}" id="${id(text)}"`;
-        }
-        out += '>';
-        return out;
-    },
+    //     let out = `<img src="${href}" alt="${text}"`;
+    //     if (title) {
+    //         out += ` title="${title}" id="${id(text)}"`;
+    //     }
+    //     out += '>';
+    //     return out;
+    // },
 }
 
 module.exports = renderer

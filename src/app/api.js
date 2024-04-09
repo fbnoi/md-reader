@@ -2,6 +2,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const markdown = require('../lib/core/markdown');
 
+
 const { ipcMain } = require('electron');
 const { dree, dreeType } = require('../lib/core/dree');
 
@@ -16,7 +17,6 @@ const api = {
     },
     openDir(dirPath) {
         const tree = dree(dirPath);
-
         return tree;
     }
 }
