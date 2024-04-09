@@ -1,6 +1,6 @@
 const path = require('node:path');
 
-const { cleanUrl, id } = require('./helper');
+const { cleanUrl, id } = require('../util/helper');
 
 const localImage = {
     workspace: __dirname,

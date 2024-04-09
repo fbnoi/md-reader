@@ -1,6 +1,6 @@
 const tree = [];
 let cursor = null;
-const { id } = require('./helper');
+const { id } = require('../util/helper');
 
 const toc = {
     heading(token) {

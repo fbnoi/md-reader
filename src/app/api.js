@@ -1,8 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const markdown = require('../lib/core/markdown');
-
-
+const cache = require('../lib/core/cache');
 const { ipcMain } = require('electron');
 const { dree, dreeType } = require('../lib/core/dree');
 

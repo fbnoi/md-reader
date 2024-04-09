@@ -1,4 +1,4 @@
-const { cleanUrl, escape, id } = require('./helper');
+const { cleanUrl, escape, id } = require('../util/helper');
 
 const renderer = {
     code(code, infostring, escaped) {
