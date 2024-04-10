@@ -1,12 +1,26 @@
+const {app} = require('electron');
 const path = require('path');
+const fs = require('fs');
+
 const localImage = require('../lib/marked/local-image');
+const storage = require('../lib/core/storage');
+
+const __USER_APP_DATA_PATH_ = app.getPath('appData');
+const _APP_DATA_PATH_ = path.join(__USER_APP_DATA_PATH_, 'md-reader/');
+const _APP_PROJECTS_PATH_ = path.join(_APP_DATA_PATH_, 'projects.xml');
+const _APP_HISTORY_PATH_ = path.join(_APP_DATA_PATH_, 'history.xml');
+
+const MAX_HISTORY_COUNT = 10;
+
 
 const workspaceProperty = {
     appDir: __dirname,
     workingDir: __dirname,
 };
 
-const workspace = {
+const project = {
+    // _xmlBuilder: new XMLBuilder(),
+
     getAppDir() {
         return workspaceProperty.appDir;
     },
@@ -14,6 +28,10 @@ const workspace = {
     setWorkingDir(dir) {
         workspaceProperty.workingDir = dir;
         localImage.setWorkspace(dir);
+        // const projectFilepath = path.join(dir, PROJECT_FILE_PATH);
+        // if (!fs.existsSync(projectFilepath)) {
+
+        // }
     },
 
     getWorkingDir() {
@@ -24,9 +42,84 @@ const workspace = {
         return path.join(workspaceProperty.appDir, 'cache');
     },
 
-    getWorkingCacheDir() {
+    getWorkingProjectDir() {
         return path.join(workspaceProperty.workingDir, '.md-reader');
+    },
+
+    getWorkingCacheDir() {
+        return path.join(workspaceProperty.workingDir, '.md-reader', CACHE_DIR_NAME);
+    },
+
+    getWorkingHistoryDir() {
+        return path.join(workspaceProperty.workingDir, '.md-reader', HISTORY_DIR_NAME);
+    },
+
+    // _create_default_project_files(filepath) {
+    //     const projectXmlObj = {
+    //         history_file: "history.xml",
+    //         cache_dir: "tmp/"
+    //     };
+    //     const xmlContent = this._xmlBuilder.build(projectXmlObj);
+    //     fs.writeFileSync(xmlContent, filepath);
+    // },
+
+    // _create_default_history_files(filepath) {
+    //     const historyXmlObj = {
+    //         last_open_file: ""
+    //     };
+    //     const xmlContent = this._xmlBuilder.build(historyXmlObj);
+    //     fs.writeFileSync(xmlContent, filepath);
+    // }
+}
+
+const application = {
+    _history_storage: storage.new('app:history', _APP_HISTORY_PATH_),
+    addDirHistory(dirPath) {
+        this._history_storage.get('dir', []).forEach((index, history) => {
+            if (history.path === dirPath) {
+                this._history_storage.remove('file', index);
+            }
+        });
+        this._history_storage.addInTop('dir', {
+            name: path.basename(dirPath),
+            path: dirPath,
+            atime: new Date().getTime(),
+        });
+        let history = this._history_storage.get('dir');
+        history.sort((h1, h2) => {
+            return h1.atime - h2.atime;
+        });
+        if (history.length > MAX_HISTORY_COUNT) {
+            for (let index = MAX_HISTORY_COUNT - 1; index < history.length; index++) {
+                this._history_storage.remove('dir', index);
+            }
+        }
+    },
+
+    addFileHistory(filepath) {
+        this._history_storage.get('file', []).forEach((index, history) => {
+            if (history.path === filepath) {
+                this._history_storage.remove('file', index);
+            }
+        });
+        this._history_storage.addInTop('file', {
+            name: path.basename(filepath),
+            path: filepath,
+            atime: new Date().getTime(),
+        });
+        let history = this._history_storage.get('file');
+        history.sort((h1, h2) => {
+            return h1.atime - h2.atime;
+        });
+        if (history.length > MAX_HISTORY_COUNT) {
+            for (let index = MAX_HISTORY_COUNT - 1; index < history.length; index++) {
+                this._history_storage.remove('file', index);
+            }
+        }
+    },
+    getHistory() {
+        return this._history_storage.all();
     }
 }
 
-module.exports = workspace;
+module.exports = { application, project };

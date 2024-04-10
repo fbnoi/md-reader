@@ -1,5 +1,5 @@
 const path = require('path');
-const workspace = require('./workspace');
+const { application, project } = require('./workspace');
 
 const loadPage = (win, name, query) => {
     return win.loadFile(path.join(__dirname, '../public/page', name + '.html'), { query: query });
@@ -11,12 +11,14 @@ const loadMainPage = (win) => {
 
 const loadFilePage = (win, filePath) => {
     let dir = path.dirname(filePath);
-    workspace.setWorkingDir(dir);
+    project.setWorkingDir(dir);
+    application.addFileHistory(filePath);
     return loadPage(win, 'file', { 'filePath': filePath });
 }
 
 const loadFolderPage = (win, dirPath) => {
-    workspace.setWorkingDir(dirPath);
+    project.setWorkingDir(dirPath);
+    application.addDirHistory(dirPath);
     return loadPage(win, 'folder', { 'dirPath': dirPath });
 }
 

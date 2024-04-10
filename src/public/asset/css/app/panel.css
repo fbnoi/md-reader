@@ -8,6 +8,11 @@
 .panel .panel-tool {
     display: flex;
     align-items: center;
+    margin-bottom: 20px;
+}
+
+.panel .panel-history {
+    
 }
 
 .panel .panel-tool-item {
