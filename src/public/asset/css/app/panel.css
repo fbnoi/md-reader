@@ -11,10 +11,34 @@
     margin-bottom: 20px;
 }
 
-.panel .panel-history {
-    
-}
-
 .panel .panel-tool-item {
     margin-right: 20px;
 }
+
+.panel-history .history-title {
+    font-size: 18px;
+    font-weight: 650;
+    color: #333333;
+}
+
+.history-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+    font-size: 14px;
+}
+
+.history-list ul li {
+    color: #666666;
+}
+
+.history-list ul li:hover {
+    color: #000000;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.panel-history .panel-history-divider {
+    border-style: ridge;
+}
+
