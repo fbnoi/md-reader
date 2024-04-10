@@ -1,4 +1,4 @@
-const {app} = require('electron');
+const { app } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
@@ -75,47 +75,49 @@ const project = {
 const application = {
     _history_storage: storage.new('app:history', _APP_HISTORY_PATH_),
     addDirHistory(dirPath) {
-        this._history_storage.get('dir', []).forEach((index, history) => {
+        let removedIndex = [];
+        let history = this._history_storage.get('dir', []);
+        history.forEach((history, index) => {
             if (history.path === dirPath) {
-                this._history_storage.remove('file', index);
+                removedIndex.push(index);
             }
+        });
+        if (history.length >= MAX_HISTORY_COUNT) {
+            for (let index = MAX_HISTORY_COUNT - 2; index < history.length; index++) {
+                removedIndex.push(index);
+            }
+        }
+        removedIndex.forEach(index => {
+            this._history_storage.remove('dir', index);
         });
         this._history_storage.addInTop('dir', {
             name: path.basename(dirPath),
             path: dirPath,
             atime: new Date().getTime(),
         });
-        let history = this._history_storage.get('dir');
-        history.sort((h1, h2) => {
-            return h1.atime - h2.atime;
-        });
-        if (history.length > MAX_HISTORY_COUNT) {
-            for (let index = MAX_HISTORY_COUNT - 1; index < history.length; index++) {
-                this._history_storage.remove('dir', index);
-            }
-        }
     },
 
     addFileHistory(filepath) {
-        this._history_storage.get('file', []).forEach((index, history) => {
+        let removedIndex = [];
+        let history = this._history_storage.get('file', []);
+        history.forEach((history, index) => {
             if (history.path === filepath) {
-                this._history_storage.remove('file', index);
+                removedIndex.push(index);
             }
+        });
+        if (history.length >= MAX_HISTORY_COUNT) {
+            for (let index = MAX_HISTORY_COUNT - 2; index < history.length; index++) {
+                removedIndex.push(index);
+            }
+        }
+        removedIndex.forEach(index => {
+            this._history_storage.remove('file', index);
         });
         this._history_storage.addInTop('file', {
             name: path.basename(filepath),
             path: filepath,
             atime: new Date().getTime(),
         });
-        let history = this._history_storage.get('file');
-        history.sort((h1, h2) => {
-            return h1.atime - h2.atime;
-        });
-        if (history.length > MAX_HISTORY_COUNT) {
-            for (let index = MAX_HISTORY_COUNT - 1; index < history.length; index++) {
-                this._history_storage.remove('file', index);
-            }
-        }
     },
     getHistory() {
         return this._history_storage.all();
