@@ -1,6 +1,5 @@
-const { app } = require('electron');
+const { app, BrowserWindow } = require('electron');
 const path = require('path');
-const fs = require('fs');
 
 const localImage = require('../lib/marked/local-image');
 const storage = require('../lib/core/storage');
@@ -10,8 +9,11 @@ const _APP_DATA_PATH_ = path.join(__USER_APP_DATA_PATH_, 'md-reader/');
 const _APP_PROJECTS_PATH_ = path.join(_APP_DATA_PATH_, 'projects.xml');
 const _APP_HISTORY_PATH_ = path.join(_APP_DATA_PATH_, 'history.xml');
 
-const MAX_HISTORY_COUNT = 10;
+const DEFAULT_WIN_WIDTH = 1028;
+const DEFAULT_WIN_HEIGHT = 680;
 
+const MAX_HISTORY_COUNT = 7;
+const application_history_storage = storage.new('app:history', _APP_HISTORY_PATH_);
 
 const workspaceProperty = {
     appDir: __dirname,
@@ -73,10 +75,31 @@ const project = {
 }
 
 const application = {
-    _history_storage: storage.new('app:history', _APP_HISTORY_PATH_),
+    _win : null,
+    createMainWindow() {
+        this._win = new BrowserWindow({
+            width: DEFAULT_WIN_WIDTH,
+            height: DEFAULT_WIN_HEIGHT,
+            webPreferences: {
+                preload: path.join(__dirname, 'preload.js'),
+                contextIsolation: true,
+                nodeIntegration: false,
+                enableRemoteModule: false,
+                webSecurity: true
+            }
+        });
+        this._win.setMenu(null);
+
+        return this._win;
+    },
+
+    getWin() {
+        return this._win;
+    },
+
     addDirHistory(dirPath) {
         let removedIndex = [];
-        let history = this._history_storage.get('dir', []);
+        let history = application_history_storage.get('dir', []);
         history.forEach((history, index) => {
             if (history.path === dirPath) {
                 removedIndex.push(index);
@@ -88,9 +111,9 @@ const application = {
             }
         }
         removedIndex.forEach(index => {
-            this._history_storage.remove('dir', index);
+            application_history_storage.remove('dir', index);
         });
-        this._history_storage.addInTop('dir', {
+        application_history_storage.addInTop('dir', {
             name: path.basename(dirPath),
             path: dirPath,
             atime: new Date().getTime(),
@@ -99,7 +122,7 @@ const application = {
 
     addFileHistory(filepath) {
         let removedIndex = [];
-        let history = this._history_storage.get('file', []);
+        let history = application_history_storage.get('file', []);
         history.forEach((history, index) => {
             if (history.path === filepath) {
                 removedIndex.push(index);
@@ -111,16 +134,17 @@ const application = {
             }
         }
         removedIndex.forEach(index => {
-            this._history_storage.remove('file', index);
+            application_history_storage.remove('file', index);
         });
-        this._history_storage.addInTop('file', {
+        application_history_storage.addInTop('file', {
             name: path.basename(filepath),
             path: filepath,
             atime: new Date().getTime(),
         });
     },
+
     getHistory() {
-        return this._history_storage.all();
+        return application_history_storage.all();
     }
 }
 

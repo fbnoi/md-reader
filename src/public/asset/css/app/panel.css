@@ -1,12 +1,20 @@
 .panel {
     position: absolute;  
-    top: 30%;
+    top: 20%;
     left: 50%;
     transform: translateX(-50%);
     width: 50%;
 }
 
-.panel .panel-tool {
+.panel-tool {
+    margin-bottom: 20px;
+}
+
+.panel-tool .panel-tool-title {
+    margin-bottom: 10px;
+}
+
+.panel-tool .panel-tool-container {
     display: flex;
     align-items: center;
     margin-bottom: 20px;
@@ -14,6 +22,10 @@
 
 .panel .panel-tool-item {
     margin-right: 20px;
+    font-size: 12px;
+    display: flex;
+    gap: 5px;
+    cursor: pointer;
 }
 
 .panel-history {
@@ -46,7 +58,7 @@
     list-style: none;
     padding: 0;
     margin: 10px 0;
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .history-list .history-list-empty {
@@ -57,7 +69,6 @@
 }
 
 .history-list ul li {
-    color: #666666;
     white-space: nowrap;
     display: flex;
     align-items: baseline;
@@ -66,23 +77,17 @@
     overflow: hidden;
 }
 
-.history-list ul li .history-item-name {
+.history-list ul li .history-item-inner {
     text-overflow: ellipsis;
     overflow: hidden;
     flex-grow: 1;
 }
 
 .history-list ul li .history-item-detail {
-    font-size: 12px;
-    margin-left: 10px;
+    margin-left: 20px;
 }
 
 .history-list ul li:hover {
     /* color: #000000; */
     cursor: pointer;
-}
-
-.history-list ul li:hover span {
-    /* text-decoration: none; */
-    /* color: blue; */
 }

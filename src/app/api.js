@@ -1,9 +1,11 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const markdown = require('../lib/core/markdown');
-const { ipcMain } = require('electron');
+const { ipcMain, dialog } = require('electron');
+
 const { dree, dreeType } = require('../lib/core/dree');
 const { application } = require('../app/workspace');
+const bus = require('./bus');
+const markdown = require('../lib/core/markdown');
 
 const api = {
     openFile(filePath) {
@@ -22,13 +24,35 @@ const api = {
 
     getHistory() {
         return application.getHistory();
-    }
+    },
+
+    openDirDialog() {
+        let dirs = dialog.showOpenDialogSync(application.win, { properties: ['openDirectory'] });
+        dirs && this.openDirPage(dirs[0]);
+    },
+
+    openFileDialog() {
+        let files = dialog.showOpenDialogSync(application.win, { properties: ['openFile'] });
+        files && this.openFilePage(files[0]);
+    },
+
+    openDirPage(dirpath) {
+        bus.send('menu:file:open_folder', dirpath);
+    },
+
+    openFilePage(filepath) {
+        bus.send('menu:file:open_file', filepath);
+    },
 }
 
 const registerAPI = () => {
-    ipcMain.handle('api:openFile', (event, filePath) => api.openFile(filePath)),
-    ipcMain.handle('api:openDir', (event, dirPath) => api.openDir(dirPath)),
-    ipcMain.handle('api:getHistory', () => api.getHistory())
+    ipcMain.handle('api:openDir', (_, dirPath) => api.openDir(dirPath));
+    ipcMain.handle('api:openFile', (_, filePath) => api.openFile(filePath));
+    ipcMain.handle('api:getHistory', () => api.getHistory());
+    ipcMain.handle('api:openDirDialog', () => api.openDirDialog());
+    ipcMain.handle('api:openFileDialog', () => api.openFileDialog());
+    ipcMain.handle('api:openDirPage', (_, dirpath) => api.openDirPage(dirpath));
+    ipcMain.handle('api:openFilePage', (_, filepath) => api.openFilePage(filepath));
 }
 
 module.exports = { registerAPI };

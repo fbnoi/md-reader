@@ -1,43 +1,20 @@
-const { app, BrowserWindow, Menu } = require('electron');
+const { app, BrowserWindow } = require('electron');
 const { loadMainPage, loadFilePage } = require('./src/app/page');
-const { createMenu } = require('./src/app/menu');
-const { listen } = require('./src/app/bus');
+const bus = require('./src/app/bus');
 const { registerAPI } = require('./src/app/api');
+const { application } = require('./src/app/workspace');
 
 try {
     require('electron-reloader')(module)
 } catch (_) {}
 
-const path = require('node:path');
-
-const DEFAULT_WIN_WIDTH = 1028;
-const DEFAULT_WIN_HEIGHT = 680;
-
-const createMainWindow = function () {
-    const win = new BrowserWindow({
-        width: DEFAULT_WIN_WIDTH,
-        height: DEFAULT_WIN_HEIGHT,
-        webPreferences: {
-            preload: path.join(__dirname, 'src/app', 'preload.js'),
-            contextIsolation: true,
-            nodeIntegration: false,
-            enableRemoteModule: false,
-            webSecurity: true
-        }
-    })
-    const menu = createMenu();
-    Menu.setApplicationMenu(menu);
-
-    return win;
-}
-
 app.whenReady().then(() => {
     const args = process.argv.slice(2);
-    const win = createMainWindow();
+    const win = application.createMainWindow();
     app.on('activate', () => {
-        if (BrowserWindow.getAllWindows().length === 0) createMainWindow();
+        if (BrowserWindow.getAllWindows().length === 0) application.createMainWindow();
     });
-    listen(win);
+    bus.listen(win);
     registerAPI();
     if (args.length === 0) {
         loadMainPage(win);
