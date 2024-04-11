@@ -3,7 +3,6 @@ const { cleanUrl, escape, id } = require('../util/helper');
 const renderer = {
     code(code, infostring, escaped) {
         const lang = (infostring || '').match(/^\S*/)?.[0];
-
         code = code.replace(/\n$/, '') + '\n';
 
         if (!lang) {

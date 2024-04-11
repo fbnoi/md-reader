@@ -3,6 +3,10 @@ body {
     color: #343a40;
 }
 
+body * {
+    font-size: 13px;
+}
+
 h1,
 h2,
 h3,
@@ -19,4 +23,32 @@ body a {
 body .container {
     border-top: 1px solid #eee;
     height: calc(100vh - 1px);
+}
+
+/* 宽度 */  
+::-webkit-scrollbar {  
+    width: 5px;
+    height: 5px;
+}  
+  
+/* 滚动条滑块 */  
+::-webkit-scrollbar-thumb {  
+    background: #888;   
+    border-radius: 5px;  
+}  
+  
+/* 滚动条滑块:hover */  
+::-webkit-scrollbar-thumb:hover {  
+    background: #555;   
+}  
+  
+/* 滚动条轨道 */  
+::-webkit-scrollbar-track {  
+    background: #f1f1f1;   
+    border-radius: 5px;  
+}  
+  
+/* 滚动条轨道:hover */  
+::-webkit-scrollbar-track:hover {  
+    background: #ddd;   
 }
