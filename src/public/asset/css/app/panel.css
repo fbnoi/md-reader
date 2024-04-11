@@ -3,6 +3,7 @@
     top: 30%;
     left: 50%;
     transform: translateX(-50%);
+    width: 50%;
 }
 
 .panel .panel-tool {
@@ -60,24 +61,28 @@
     white-space: nowrap;
     display: flex;
     align-items: baseline;
-    gap: 10px;
-    font-size: 12px;
+    gap: 5px;
     margin-bottom: 8px;
-}
-
-.history-list ul li span {
-    font-size: 10px;
-    flex-grow: 1;
-    text-overflow: ellipsis;
     overflow: hidden;
 }
 
+.history-list ul li .history-item-name {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    flex-grow: 1;
+}
+
+.history-list ul li .history-item-detail {
+    font-size: 12px;
+    margin-left: 10px;
+}
+
 .history-list ul li:hover {
-    color: #000000;
+    /* color: #000000; */
     cursor: pointer;
 }
 
 .history-list ul li:hover span {
-    text-decoration: none;
-    color: blue;
+    /* text-decoration: none; */
+    /* color: blue; */
 }
