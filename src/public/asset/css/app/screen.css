@@ -25,6 +25,40 @@ body .container {
     height: calc(100vh - 1px);
 }
 
+.tool-bar {
+    width: calc(100%);
+    position: absolute;
+    bottom: 0;
+    background-color: hsl(292, 65%, 91%);
+    height: 20px;
+    color: #676869;
+    display: inline;
+    user-select: none;
+}
+
+.tool-bar .tool-bar-item {
+    margin-right: 5px;
+    display: inline-block;
+    cursor: pointer;
+    height: 20px;
+    line-height: 20px;
+    padding: 0 5px;
+}
+
+.tool-bar .tool-bar-item-right {
+    float: right;
+    margin-right: 0px;
+    margin-left: 5px;
+}
+
+.tool-bar .tool-bar-item:hover {
+    background-color: hsl(293, 94%, 86%);
+}
+
+.tool-bar .tool-bar-item:active {
+    background-color: hsl(291, 96%, 80%);
+}
+
 /* 宽度 */  
 ::-webkit-scrollbar {  
     width: 5px;

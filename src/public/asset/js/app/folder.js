@@ -53,6 +53,13 @@ document.addEventListener('DOMContentLoaded', function () {
                         radio = 0.5;
                         splitResize();
                     }
+                }).then(() => {
+                    document.querySelectorAll('a.open-in-browser').forEach((link) => {
+                        link.addEventListener('click', (e) => {  
+                            e.preventDefault();
+                            window.API.openExternal(link.href);
+                        }); 
+                    });
                 });
             })
         });

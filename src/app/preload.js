@@ -8,4 +8,5 @@ contextBridge.exposeInMainWorld('API', {
     openFileDialog: () => ipcRenderer.invoke('api:openFileDialog'),
     openDirPage: (dirpath) => ipcRenderer.invoke('api:openDirPage', dirpath),
     openFilePage: (filepath) => ipcRenderer.invoke('api:openFilePage', filepath),
+    openExternal: (link) => ipcRenderer.invoke('api:openExternal', link),
 });

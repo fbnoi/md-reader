@@ -1,6 +1,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const { ipcMain, dialog } = require('electron');
+const { ipcMain, dialog, shell } = require('electron');
 
 const { dree, dreeType } = require('../lib/core/dree');
 const { application } = require('../app/workspace');
@@ -43,6 +43,10 @@ const api = {
     openFilePage(filepath) {
         bus.send('menu:file:open_file', filepath);
     },
+
+    openExternal(link) {
+        shell.openExternal(link);
+    },
 }
 
 const registerAPI = () => {
@@ -53,6 +57,7 @@ const registerAPI = () => {
     ipcMain.handle('api:openFileDialog', () => api.openFileDialog());
     ipcMain.handle('api:openDirPage', (_, dirpath) => api.openDirPage(dirpath));
     ipcMain.handle('api:openFilePage', (_, filepath) => api.openFilePage(filepath));
+    ipcMain.handle('api:openExternal', (_, link) => api.openExternal(link));
 }
 
 module.exports = { registerAPI };

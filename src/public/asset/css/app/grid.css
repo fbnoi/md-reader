@@ -1,5 +1,5 @@
 .grid {
-    height: 100%;
+    height: calc(100% - 20px);
     display: grid;
     grid-template-columns: 360px 5px 1fr;
 }
@@ -13,7 +13,6 @@
 .grid .side-view {
     height: 100%;
     overflow-y: hidden;
-    margin-right: -5px;
     display: grid;
     grid-template-rows: 1fr 5px 0;
 }
@@ -35,16 +34,16 @@
 }
 
 .gutter-main {
-    border-right-width: 2px;
-    border-right-style: solid;
+    border-left-width: 2px;
+    border-left-style: solid;
     cursor: col-resize;
     grid-row: 1/-1;
     grid-column: 2;
 }
 
 .gutter-side {
-    border-top-width: 2px;
-    border-top-style: solid;
+    border-bottom-width: 2px;
+    border-bottom-style: solid;
     cursor: row-resize;
     grid-column: 1/-1;
     grid-row: 2;

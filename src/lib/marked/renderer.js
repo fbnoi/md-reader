@@ -27,7 +27,7 @@ const renderer = {
     },
 
     heading(text, level, raw) {
-        return `<h${level} id="${id(text)}"><a href="#${id(text)}" id="${id(text + '_link')}">${text}</a></h${level}>\n`;
+        return `<h${level} id="${id(text)}"><a href="#${id(text)}" id="${id(text + '_link')}" tabindex="-1">${text}</a></h${level}>\n`;
     },
 
     listitem(text, task, checked) {
@@ -81,7 +81,7 @@ const renderer = {
             return text;
         }
         href = cleanHref;
-        let out = '<a href="' + href + '" id="' + id(text) + '"';
+        let out = '<a href="' + href + '" id="' + id(text) + '" tabindex="-1" class="open-in-browser"';
         if (title) {
             out += ' title="' + title + '"';
         }

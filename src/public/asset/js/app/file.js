@@ -15,5 +15,12 @@ document.addEventListener('DOMContentLoaded', function () {
         document.title = fileInfo.name;
         document.querySelector('.article').innerHTML = fileInfo.doc.html;
         document.querySelector('.category').innerHTML = fileInfo.doc.toc;
+    }).then(() => {
+        document.querySelectorAll('a.open-in-browser').forEach((link) => {
+            link.addEventListener('click', (e) => {  
+                e.preventDefault();
+                window.API.openExternal(link.href);
+            }); 
+        });
     });
 });

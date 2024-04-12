@@ -46,7 +46,7 @@ function wrapHeading(tree) {
     let html = '<ul>';
     tree.forEach(node => {
         html += `<li>`;
-        html += `<a href="#${node.id}">${node.name}`
+        html += `<a href="#${node.id}" tabindex="-1">${node.name}`
         if (node.children.length !== 0) {
             html += wrapHeading(node.children);
         }
