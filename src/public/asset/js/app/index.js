@@ -9,9 +9,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 html += 
                 `<li class="dir-history-item">
                     <span class="history-item-inner open" title="${dir.path}" property-path="${dir.path}">
-                        <i class="bi bi-folder"></i> ${dir.name}<span class="history-item-detail">${dir.path}</span>
+                        <i class="fa-regular fa-folder"></i> ${dir.name}<span class="history-item-detail">${dir.path}</span>
                     </span>
-                    <i class="bi bi-trash"></i>
+                    <i class="fa-regular fa-trash-can"></i>
                 </li>`;
             });
             html += '</ul>';
@@ -28,9 +28,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 html += 
                 `<li class="file-history-item">
                     <span class="history-item-inner" title="${file.path}" property-path="${file.path}">
-                        <i class="bi bi-file-earmark"></i> ${file.name}<span class="history-item-detail">${file.path}</span>
+                        <i class="fa-regular fa-file"></i> ${file.name}<span class="history-item-detail">${file.path}</span>
                     </span>
-                    <i class="bi bi-trash"></i>
+                    <i class="fa-regular fa-trash-can"></i>
                 </li>`;
             });
             html += '</ul>';

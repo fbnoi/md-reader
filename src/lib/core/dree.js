@@ -83,16 +83,19 @@ const dree = (dir, options = null) => {
         fs.readdirSync(dir).forEach(file => {
             let pathname = path.join(dir, file);
             let stat = fs.statSync(pathname);
+            const node = { name: file, path: pathname, ctimeMs: stat.ctimeMs, mtimeMs: stat.mtimeMs };
             if (stat.isFile()) {
                 if (!options.extensions || options.extensions.test(file)) {
-                    tree.push({ name: file, path: pathname, type: dreeType.TYPE_FILE, ctimeMs: stat.ctimeMs, mtimeMs: stat.mtimeMs });
+                    node.type = dreeType.TYPE_FILE;
+                    tree.push(node);
                 }
             } else if (stat.isDirectory() && !options.exclude || !options.exclude.test(file)) {
-                const dirTree = { name: file, path: pathname, children: [], type: dreeType.TYPE_DIR }
-                readDir(pathname, dirTree.children);
-                if (options.reserveEmptyDir || dirTree.children.length != 0) {
-                    sortChildren(dirTree.children);
-                    tree.push(dirTree);
+                node.type = dreeType.TYPE_DIR;
+                node.children = [];
+                readDir(pathname, node.children);
+                if (options.reserveEmptyDir || node.children.length != 0) {
+                    sortChildren(node.children);
+                    tree.push(node);
                 }
             }
         });
@@ -111,6 +114,7 @@ const dree = (dir, options = null) => {
         let html = '<ul>';
         tree.forEach(node => {
             html += `<li>`;
+            html += `<i class="fa-regular ${node.type === dreeType.TYPE_DIR ? 'fa-folder' : 'fa-file'}"></i>`
             html += `<a property-path="${node.path}" property-type="${node.type}" href="#" tabindex="-1">${node.name}</a>`
             if (node.type === dreeType.TYPE_DIR) {
                 html += render(node.children);
