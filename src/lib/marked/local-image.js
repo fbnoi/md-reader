@@ -3,7 +3,7 @@ const path = require('node:path');
 const { cleanUrl, id } = require('../util/helper');
 
 const localImage = {
-    workspace: __dirname,
+    basepath: __dirname,
     extension: () => {
         return {
             name: 'image',
@@ -14,7 +14,7 @@ const localImage = {
                 }
                 let href = cleanHref;
                 if (!href.startsWith('http') && !path.isAbsolute(href)) {
-                    href = path.join(localImage.workspace, href);
+                    href = path.join(localImage.basepath, href);
                 }
                 let out = `<img src="${href}" alt="${token.text}" id="${id(token.href)}"`;
                 if (token.title) {
@@ -25,8 +25,8 @@ const localImage = {
             },
         }
     },
-    setWorkspace: (workspace) => {
-        localImage.workspace = workspace;
+    setBasepath: (basepath) => {
+        localImage.basepath = basepath;
     }
 };
 

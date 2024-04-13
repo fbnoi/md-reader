@@ -6,9 +6,11 @@ const { dree, dreeType } = require('../lib/core/dree');
 const { application } = require('../app/workspace');
 const bus = require('./bus');
 const markdown = require('../lib/core/markdown');
+const localImage = require('../lib/marked/local-image');
 
 const api = {
     openFile(filePath) {
+        localImage.setBasepath(path.dirname(filePath));
         return {
             name: path.basename(filePath),
             path: filePath,

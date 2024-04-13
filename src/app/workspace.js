@@ -1,7 +1,6 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
 
-const localImage = require('../lib/marked/local-image');
 const storage = require('../lib/core/storage');
 
 const __USER_APP_DATA_PATH_ = app.getPath('appData');
@@ -29,11 +28,6 @@ const project = {
 
     setWorkingDir(dir) {
         workspaceProperty.workingDir = dir;
-        localImage.setWorkspace(dir);
-        // const projectFilepath = path.join(dir, PROJECT_FILE_PATH);
-        // if (!fs.existsSync(projectFilepath)) {
-
-        // }
     },
 
     getWorkingDir() {
