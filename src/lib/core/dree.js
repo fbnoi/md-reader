@@ -114,8 +114,10 @@ const dree = (dir, options = null) => {
         let html = '<ul>';
         tree.forEach(node => {
             html += `<li>`;
-            html += `<i class="fa-regular ${node.type === dreeType.TYPE_DIR ? 'fa-folder' : 'fa-file'}"></i>`
-            html += `<a property-path="${node.path}" property-type="${node.type}" href="#" tabindex="-1">${node.name}</a>`
+            html += `<a property-path="${node.path}" property-type="${node.type}" href="#" tabindex="-1">`;
+            html += `<i class="fa-regular ${node.type === dreeType.TYPE_DIR ? 'fa-folder' : 'fa-file'}"></i>`;
+            html += node.name;
+            html += `</a>`;
             if (node.type === dreeType.TYPE_DIR) {
                 html += render(node.children);
             }

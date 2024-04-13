@@ -36,7 +36,7 @@ const storage = {
                 this._persist();
             },
             remove(name, key) {
-                delete this._store.root[name][key];
+                this._store.root[name].splice(key, 1);
                 this._persist();
             },
             set(name, value) {

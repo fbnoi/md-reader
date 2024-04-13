@@ -1,5 +1,5 @@
 const EventEmitter = require('node:events');
-const { loadFilePage, loadFolderPage } = require('./page');
+const { loadMainPage, loadFilePage, loadFolderPage } = require('./page');
 
 const eventEmitter = new EventEmitter();
 
@@ -8,19 +8,23 @@ const bus = {
         eventEmitter.emit(event, args);
     },
     listen(win) {
-        eventEmitter.on('menu:file:open_file', (filePath) => {
+        eventEmitter.on('page:open_index', (filePath) => {
+            loadMainPage(win);
+        });
+
+        eventEmitter.on('page:open_file', (filePath) => {
             loadFilePage(win, filePath);
         });
 
-        eventEmitter.on('menu:file:open_folder', (dirPath) => {
+        eventEmitter.on('page:open_folder', (dirPath) => {
             loadFolderPage(win, dirPath);
         });
 
-        eventEmitter.on('menu:file:open_folder:error', (error) => {
+        eventEmitter.on('page:open_folder:error', (error) => {
             console.error(error);
         });
 
-        eventEmitter.on('menu:file:debug', () => {
+        eventEmitter.on('dev:debug', () => {
             win.webContents.openDevTools();
         });
     }

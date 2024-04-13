@@ -36,12 +36,20 @@ const api = {
         files && this.openFilePage(files[0]);
     },
 
+    openIndexPage() {
+        bus.send('page:open_index');
+    },
+
     openDirPage(dirpath) {
-        bus.send('menu:file:open_folder', dirpath);
+        bus.send('page:open_folder', dirpath);
     },
 
     openFilePage(filepath) {
-        bus.send('menu:file:open_file', filepath);
+        bus.send('page:open_file', filepath);
+    },
+
+    openDevDebug() {
+        bus.send('dev:debug');
     },
 
     openExternal(link) {
@@ -55,8 +63,10 @@ const registerAPI = () => {
     ipcMain.handle('api:getHistory', () => api.getHistory());
     ipcMain.handle('api:openDirDialog', () => api.openDirDialog());
     ipcMain.handle('api:openFileDialog', () => api.openFileDialog());
+    ipcMain.handle('api:openIndexPage', () => api.openIndexPage());
     ipcMain.handle('api:openDirPage', (_, dirpath) => api.openDirPage(dirpath));
     ipcMain.handle('api:openFilePage', (_, filepath) => api.openFilePage(filepath));
+    ipcMain.handle('api:openDevDebug', () => api.openDevDebug());
     ipcMain.handle('api:openExternal', (_, link) => api.openExternal(link));
 }
 
