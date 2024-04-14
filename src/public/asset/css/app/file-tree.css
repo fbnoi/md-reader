@@ -1,10 +1,26 @@
 .side-view .file-tree {
     overflow-y: auto;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
 }
 
-.file-tree ul {
+.file-tree > ul {
+    min-width: calc(100% - 30px);
+    padding: 10px 15px;
+    list-style: none;
+    position: relative;
+}
+
+.file-tree li ul {
+    display: none;
     list-style: none;
     padding-left: 20px;
+}
+
+.file-tree li.expanded ul {
+    display: block;
 }
 
 .file-tree ul > li {
@@ -19,17 +35,31 @@
     font-size: 12px;
     max-width: calc(100% - 20px);
     display: inline-block;
-    padding: 2px;
+    height: 24px;
+    line-height: 24px;
 }
 
-.file-tree ul > li > a > i{
+.file-tree ul > li > a::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 24px;
+    cursor: pointer;
+}
+
+.file-tree ul > li > a > i {
     margin-right: 10px;
 }
 
-.file-tree ul > li > a:hover {
+.file-tree ul > li > a:hover::before {
     background-color: rgba(100, 100, 100, 0.1);
 }
 
-.file-tree ul > li > a:active {
+.file-tree ul > li > a:active::before {
+    background-color: rgba(100, 100, 100, 0.2);
+}
+
+.file-tree ul > li > a.selected::before {
     background-color: rgba(100, 100, 100, 0.2);
 }

@@ -20,7 +20,6 @@ const workspaceProperty = {
 };
 
 const project = {
-    // _xmlBuilder: new XMLBuilder(),
 
     getAppDir() {
         return workspaceProperty.appDir;

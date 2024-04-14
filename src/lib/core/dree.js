@@ -145,6 +145,8 @@ const dree = (dir, options = null) => {
 
     readDir(dir, root);
 
+    return root;
+
     return render(root);
 }
 
