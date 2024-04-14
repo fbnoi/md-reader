@@ -21,7 +21,6 @@ app.whenReady().then(() => {
     } else {
         loadFilePage(win, args[0]);
     }
-    win.webContents.openDevTools();
 });
 
 app.on('window-all-closed', () => {

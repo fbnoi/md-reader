@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }).then(() => {
         return new URLSearchParams(window.location.search).get('filePath');
     }).then((filePath) => {
-        return window.API.openFile(filePath);
+        return window.API.readFile(filePath);
     }).then((fileInfo) => {
         document.title = fileInfo.name;
         document.querySelector('.article').innerHTML = fileInfo.doc.html;

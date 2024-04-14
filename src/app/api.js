@@ -3,13 +3,13 @@ const path = require('node:path');
 const { ipcMain, dialog, shell } = require('electron');
 
 const { dree, dreeType } = require('../lib/core/dree');
-const { application } = require('../app/workspace');
+const { application, project } = require('../app/workspace');
 const bus = require('./bus');
 const markdown = require('../lib/core/markdown');
 const localImage = require('../lib/marked/local-image');
 
 const api = {
-    openFile(filePath) {
+    readFile(filePath) {
         localImage.setBasepath(path.dirname(filePath));
         return {
             name: path.basename(filePath),
@@ -19,8 +19,25 @@ const api = {
         };
     },
 
-    openDir(dirPath) {
+    readDir(dirPath) {
         const tree = dree(dirPath);
+        const walk = (nodes, fn) => {
+            nodes.forEach(node => {
+                fn(node);
+                if (node.children) {
+                    walk(node.children, fn);
+                }
+            });
+        }
+        let snapshot = project.getProjectSnapshot();
+        walk(tree, node => {
+            if (snapshot.expandedDir && snapshot.expandedDir.indexOf(node.path) !== -1) {
+                node.expanded = true;
+            }
+            if (snapshot.selectedPath && snapshot.selectedPath == node.path) {
+                node.selected = true;
+            }
+        });
         return tree;
     },
 
@@ -42,8 +59,8 @@ const api = {
         bus.send('page:open_index');
     },
 
-    openDirPage(dirpath) {
-        bus.send('page:open_folder', dirpath);
+    openDirPage(dirPath) {
+        bus.send('page:open_folder', dirPath);
     },
 
     openFilePage(filepath) {
@@ -57,19 +74,44 @@ const api = {
     openExternal(link) {
         shell.openExternal(link);
     },
+
+    addOpenDirCache(dirPath) {
+        project.addExpandedDir(dirPath);
+    },
+
+    removeOpenDirCache(dirPath) {
+        project.removeExpandedDir(dirPath);
+    },
+
+    setOpenedFileCache(filepath) {
+        project.setOpenedFile(filepath);
+    },
+
+    getOpenedFileCache() {
+        return project.getProjectSnapshot().openedFile;
+    },
+
+    setSelectedPathCache(path) {
+        project.setSelectedPath(path);
+    }
 }
 
 const registerAPI = () => {
-    ipcMain.handle('api:openDir', (_, dirPath) => api.openDir(dirPath));
-    ipcMain.handle('api:openFile', (_, filePath) => api.openFile(filePath));
+    ipcMain.handle('api:readDir', (_, dirPath) => api.readDir(dirPath));
+    ipcMain.handle('api:readFile', (_, filePath) => api.readFile(filePath));
     ipcMain.handle('api:getHistory', () => api.getHistory());
     ipcMain.handle('api:openDirDialog', () => api.openDirDialog());
     ipcMain.handle('api:openFileDialog', () => api.openFileDialog());
     ipcMain.handle('api:openIndexPage', () => api.openIndexPage());
-    ipcMain.handle('api:openDirPage', (_, dirpath) => api.openDirPage(dirpath));
+    ipcMain.handle('api:openDirPage', (_, dirPath) => api.openDirPage(dirPath));
     ipcMain.handle('api:openFilePage', (_, filepath) => api.openFilePage(filepath));
     ipcMain.handle('api:openDevDebug', () => api.openDevDebug());
     ipcMain.handle('api:openExternal', (_, link) => api.openExternal(link));
+    ipcMain.handle('api:addOpenDirCache', (_, dirPath) => api.addOpenDirCache(dirPath));
+    ipcMain.handle('api:removeOpenDirCache', (dirPath) => api.removeOpenDirCache(dirPath));
+    ipcMain.handle('api:setOpenedFileCache', (_, filepath) => api.setOpenedFileCache(filepath));
+    ipcMain.handle('api:getOpenedFileCache', () => api.getOpenedFileCache());
+    ipcMain.handle('api:setSelectedPathCache', (_, path) => api.setSelectedPathCache(path));
 }
 
 module.exports = { registerAPI };

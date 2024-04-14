@@ -76,11 +76,11 @@
                 let li = document.createElement('li');
                 node.expanded && li.classList.add(options.expandedClass);
                 let a = document.createElement('a');
-                this.selectedNode = node.selected ? node : null;
+                this.selectedNode = node.selected ? node : this.selectedNode;
                 node.selected && a.classList.add(options.selectedClass);
                 let i = document.createElement('i');
                 a.text = node.name;
-                let iClass = node.type === TYPE_DIR ? (options.expanded ? "fa-folder-open" : "fa-folder") : "fa-file";
+                let iClass = node.type === TYPE_DIR ? (node.expanded ? "fa-folder-open" : "fa-folder") : "fa-file";
                 i.classList.add('fa-regular', iClass);
                 a.prepend(i);
                 li.append(a);

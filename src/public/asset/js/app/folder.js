@@ -11,27 +11,27 @@ document.addEventListener('DOMContentLoaded', function () {
     function updateRadio() {
         radio = categoryElem.clientHeight / sideViewElem.clientHeight;
     }
-    function openFile(filepath) {
-        new Promise(resolve => {
-            resolve(window.API.openFile(filepath));
-        }).then((fileInfo) => {
-            document.title = fileInfo.name;
-            articleElem.innerHTML = fileInfo.doc.html;
-            articleElem.scrollTop = 0;;
-            categoryElem.innerHTML = fileInfo.doc.toc;
-            if (!initialed) {
-                initialed = true;
-                radio = 0.5;
-                splitResize();
-            }
-        }).then(() => {
-            document.querySelectorAll('a.open-in-browser').forEach((link) => {
-                link.addEventListener('click', (e) => {  
-                    e.preventDefault();
-                    window.API.openExternal(link.href);
-                }); 
+    function readFile(filepath) {
+        window.API.readFile(filepath)
+            .then((fileInfo) => {
+                document.title = fileInfo.name;
+                articleElem.innerHTML = fileInfo.doc.html;
+                articleElem.scrollTop = 0;;
+                categoryElem.innerHTML = fileInfo.doc.toc;
+                if (!initialed) {
+                    initialed = true;
+                    radio = 0.5;
+                    splitResize();
+                }
+            })
+            .then(() => {
+                document.querySelectorAll('a.open-in-browser').forEach((link) => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        window.API.openExternal(link.href);
+                    });
+                });
             });
-        });
     }
     new Promise((resolve) => {
         Split({
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 track: 1,
                 element: document.querySelector('.gutter-side'),
             }],
-            onDragEnd: function(direction, track) {
+            onDragEnd: function (direction, track) {
                 if (direction === 'row' && track === 1) {
                     updateRadio();
                 }
@@ -53,19 +53,25 @@ document.addEventListener('DOMContentLoaded', function () {
     }).then(() => {
         return new URLSearchParams(window.location.search).get('dirPath');
     }).then((dirPath) => {
-        return window.API.openDir(dirPath);
+        return window.API.readDir(dirPath);
     }).then((nodes) => {
         Dree(nodes, {
             element: document.querySelector('.file-tree'),
             onSelect: (node) => {
                 if (node.type != 1) {
-                    openFile(node.path);
+                    readFile(node.path);
+                    window.API.setOpenedFileCache(node.path);
                 }
+                window.API.setSelectedPathCache(node.path);
             },
-            onExpand: (node) => console.log(node),
-            onFold: (node) => console.log(node),
+            onExpand: (node) => window.API.addOpenDirCache(node.path),
+            onFold: (node) => window.API.removeOpenDirCache(node.path),
         });
         return;
+    }).then(() => {
+        window.API.getOpenedFileCache()
+            .then((filepath) => filepath && readFile(filepath))
+            .then();
     });
 
     window.addEventListener('resize', splitResize);

@@ -2,11 +2,12 @@ const { app, BrowserWindow } = require('electron');
 const path = require('path');
 
 const storage = require('../lib/core/storage');
+const { id } = require('../lib/util/helper');
 
-const __USER_APP_DATA_PATH_ = app.getPath('appData');
-const _APP_DATA_PATH_ = path.join(__USER_APP_DATA_PATH_, 'md-reader/');
-const _APP_PROJECTS_PATH_ = path.join(_APP_DATA_PATH_, 'projects.xml');
+const _USER_APP_DATA_PATH_ = app.getPath('appData');
+const _APP_DATA_PATH_ = path.join(_USER_APP_DATA_PATH_, 'md-reader/');
 const _APP_HISTORY_PATH_ = path.join(_APP_DATA_PATH_, 'history.xml');
+const _APP_PROJECTS_DIR_PATH_ = path.join(_APP_DATA_PATH_, 'projects');
 
 const DEFAULT_WIN_WIDTH = 1028;
 const DEFAULT_WIN_HEIGHT = 680;
@@ -14,61 +15,58 @@ const DEFAULT_WIN_HEIGHT = 680;
 const MAX_HISTORY_COUNT = 7;
 const application_history_storage = storage.new('app:history', _APP_HISTORY_PATH_);
 
-const workspaceProperty = {
-    appDir: __dirname,
-    workingDir: __dirname,
-};
-
 const project = {
-
-    getAppDir() {
-        return workspaceProperty.appDir;
-    },
-
+    workingDir: null,
+    snapshotStorage: null,
+    projectId: null,
     setWorkingDir(dir) {
-        workspaceProperty.workingDir = dir;
+        this.workingDir = dir;
+        this.projectId = id(dir);
+        this.snapshotStorage = storage.new('project:' + this.projectId, this.getProjectSnapshotPath());
     },
-
     getWorkingDir() {
-        return workspaceProperty.workingDir;
+        return this.workingDir;
     },
-
-    getAppCacheDir() {
-        return path.join(workspaceProperty.appDir, 'cache');
-    },
-
     getWorkingProjectDir() {
-        return path.join(workspaceProperty.workingDir, '.md-reader');
+        return path.join(_APP_PROJECTS_DIR_PATH_, this.projectId);
     },
-
     getWorkingCacheDir() {
-        return path.join(workspaceProperty.workingDir, '.md-reader', CACHE_DIR_NAME);
+        return path.join(_APP_PROJECTS_DIR_PATH_, this.projectId, 'cache');
+    },
+    getProjectSnapshotPath() {
+        return path.join(_APP_PROJECTS_DIR_PATH_, this.projectId, 'snapshot.xml');
     },
 
-    getWorkingHistoryDir() {
-        return path.join(workspaceProperty.workingDir, '.md-reader', HISTORY_DIR_NAME);
+    getProjectSnapshot() {
+        return this.snapshotStorage.all();
     },
 
-    // _create_default_project_files(filepath) {
-    //     const projectXmlObj = {
-    //         history_file: "history.xml",
-    //         cache_dir: "tmp/"
-    //     };
-    //     const xmlContent = this._xmlBuilder.build(projectXmlObj);
-    //     fs.writeFileSync(xmlContent, filepath);
-    // },
+    addExpandedDir(dirPath) {
+        let expandedDirs = this.snapshotStorage.get('expandedDir', []);
+        if (expandedDirs.indexOf(dirPath) === -1) {
+            this.snapshotStorage.add('expandedDir', dirPath);
+        }
+    },
 
-    // _create_default_history_files(filepath) {
-    //     const historyXmlObj = {
-    //         last_open_file: ""
-    //     };
-    //     const xmlContent = this._xmlBuilder.build(historyXmlObj);
-    //     fs.writeFileSync(xmlContent, filepath);
-    // }
+    removeExpandedDir(dirPath) {
+        let expandedDirs = this.snapshotStorage.get('expandedDir', []);
+        let index = expandedDirs.indexOf(dirPath);
+        if (index !== -1) {
+            this.snapshotStorage.remove('expandedDir', index);
+        }
+    },
+
+    setOpenedFile(filepath) {
+        this.snapshotStorage.set('openedFile', filepath);
+    },
+
+    setSelectedPath(path) {
+        this.snapshotStorage.set('selectedPath', path);
+    }
 }
 
 const application = {
-    _win : null,
+    _win: null,
     createMainWindow() {
         this._win = new BrowserWindow({
             width: DEFAULT_WIN_WIDTH,

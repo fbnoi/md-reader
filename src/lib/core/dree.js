@@ -142,12 +142,9 @@ const dree = (dir, options = null) => {
     };
 
     const root = [];
-
     readDir(dir, root);
 
     return root;
-
-    return render(root);
 }
 
 module.exports = { dree, dreeType }
