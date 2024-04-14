@@ -97,21 +97,20 @@
                     event.preventDefault();
                     event.stopPropagation();
                     if (node.type === TYPE_DIR) {
-                        toggleNodeExpanded(node)
+                        toggleNodeExpanded(node);
                     }
                     
                 });
             });
-
             return ul;
         };
-
-        let doms = render(nodes, {
+        let container = document.createElement('div');
+        container.classList.add('tree-container');
+        container.append(render(nodes, {
             expandedClass: this.options.expandedClass,
             selectedClass: this.options.selectedClass,
-        });
-
-        this.element.append(doms);
+        }));
+        this.element.append(container);
     }
 
     function index(nodes, options) { return new Dree(nodes, options); }
