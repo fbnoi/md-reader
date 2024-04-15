@@ -4,6 +4,10 @@ body {
     background-color: #b5eecd;
 }
 
+body * {
+    font-size: 13px;
+}
+
 h1,
 h2,
 h3,
@@ -37,9 +41,9 @@ body .container {
     margin-right: 5px;
     display: inline-block;
     cursor: pointer;
-    height: 16px;
-    line-height: 16px;
-    padding: 2px 5px;
+    height: 20px;
+    line-height: 20px;
+    padding: 0 5px;
 }
 
 .tool-bar .tool-bar-item-right {
