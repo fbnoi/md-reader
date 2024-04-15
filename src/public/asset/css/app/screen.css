@@ -1,10 +1,7 @@
 body {
     margin: 0;
-    color: #343a40;
-}
-
-body * {
-    font-size: 13px;
+    color: #414c41;
+    background-color: #b5eecd;
 }
 
 h1,
@@ -13,7 +10,7 @@ h3,
 h4,
 h5,
 h6 {
-    color: #343a40;
+    color: #414c41;
 }
 
 body a {
@@ -40,9 +37,9 @@ body .container {
     margin-right: 5px;
     display: inline-block;
     cursor: pointer;
-    height: 20px;
-    line-height: 20px;
-    padding: 0 5px;
+    height: 16px;
+    line-height: 16px;
+    padding: 2px 5px;
 }
 
 .tool-bar .tool-bar-item-right {
@@ -67,22 +64,22 @@ body .container {
   
 /* 滚动条滑块 */  
 ::-webkit-scrollbar-thumb {  
-    background: #888;   
+    background: #081408;   
     border-radius: 5px;  
 }  
   
 /* 滚动条滑块:hover */  
 ::-webkit-scrollbar-thumb:hover {  
-    background: #555;   
+    background: #081408;   
 }  
   
 /* 滚动条轨道 */  
 ::-webkit-scrollbar-track {  
-    background: #f1f1f1;   
+    background: #6a7962;   
     border-radius: 5px;  
 }  
   
 /* 滚动条轨道:hover */  
 ::-webkit-scrollbar-track:hover {  
-    background: #ddd;   
+    background: #6a7962;   
 }

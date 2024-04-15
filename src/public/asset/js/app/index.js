@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     <span class="history-item-inner open" title="${dir.path}" property-path="${dir.path}">
                         <i class="fa-regular fa-folder"></i> ${dir.name}<span class="history-item-detail">${dir.path}</span>
                     </span>
-                    <i class="fa-regular fa-trash-can"></i>
                 </li>`;
             });
             html += '</ul>';
@@ -30,7 +29,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     <span class="history-item-inner" title="${file.path}" property-path="${file.path}">
                         <i class="fa-regular fa-file"></i> ${file.name}<span class="history-item-detail">${file.path}</span>
                     </span>
-                    <i class="fa-regular fa-trash-can"></i>
                 </li>`;
             });
             html += '</ul>';

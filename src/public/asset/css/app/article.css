@@ -4,6 +4,10 @@
     padding: 20px;
 }
 
+.article * {
+    font-size: 16px;
+}
+
 .article pre {
     background-color: hsl(0,0%,96.5%);
     border-radius: calc( 6px );
