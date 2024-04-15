@@ -7,15 +7,22 @@ document.addEventListener('DOMContentLoaded', function () {
             }]
         });
         resolve();
-    }).then(() => {
+    })
+    .then(() => {
         return new URLSearchParams(window.location.search).get('filePath');
-    }).then((filePath) => {
+    })
+    .then((filePath) => {
         return window.API.readFile(filePath);
-    }).then((fileInfo) => {
+    })
+    .then((fileInfo) => {
         document.title = fileInfo.name;
         document.querySelector('.article').innerHTML = fileInfo.doc.html;
         document.querySelector('.category').innerHTML = fileInfo.doc.toc;
-    }).then(() => {
+    })
+    .then(() => {
+        Noter(document.querySelector('.article'), {});
+    })
+    .then(() => {
         document.querySelectorAll('a.open-in-browser').forEach((link) => {
             link.addEventListener('click', (e) => {  
                 e.preventDefault();
