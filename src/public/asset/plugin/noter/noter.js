@@ -52,8 +52,6 @@
                 range.setEnd(startContainer, endOffset)
                 // 通过 getBoundingClientRect 获取位置信息
                 const rect = range.getBoundingClientRect();
-                console.log(aaa.x, aaa.y, rect.x, rect.y);
-                console.log(rect.x - aaa.x, rect.y - aaa.y);
                 // create shape
                 const box = new Konva.Rect({
                     x: rect.x - aaa.x,
