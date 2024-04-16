@@ -16,6 +16,7 @@
             cc.style.bottom = '0';
             cc.style.pointerEvents = 'none';
             child.append(cc);
+            child.classList.add('konva-anchor');
             const stage = new Konva.Stage({
                 container: cc,
                 width: cc.clientWidth,
@@ -39,7 +40,6 @@
             // continue;
             child.addEventListener('mouseup', () => {
                 const aaa = child.getBoundingClientRect();
-                console.log(child);
                 const {
                     startContainer, // 起始节点
                     startOffset, // 起始节点偏移量
