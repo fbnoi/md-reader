@@ -16,7 +16,6 @@
             cc.style.bottom = '0';
             cc.style.pointerEvents = 'none';
             child.append(cc);
-            const aaa = child.getBoundingClientRect();
             const stage = new Konva.Stage({
                 container: cc,
                 width: cc.clientWidth,
@@ -39,6 +38,8 @@
             // // return;
             // continue;
             child.addEventListener('mouseup', () => {
+                const aaa = child.getBoundingClientRect();
+                console.log(child);
                 const {
                     startContainer, // 起始节点
                     startOffset, // 起始节点偏移量
@@ -55,7 +56,9 @@
                 // create shape
                 const box = new Konva.Rect({
                     x: rect.x - aaa.x,
-                    y: rect.y + element.scrollTop - aaa.y,
+                    y: rect.y - aaa.y,
+                    // x:0,
+                    // y:0,
                     width: rect.width,
                     height: rect.height,
                     fill: '#00D2FF',
