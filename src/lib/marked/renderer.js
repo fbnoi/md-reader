@@ -6,12 +6,11 @@ const renderer = {
         code = code.replace(/\n$/, '') + '\n';
 
         if (!lang) {
-            return '<pre><code class="highlight">'
+            return `<pre id="${id(code)}"><code id="${id('code' + code)}" class="highlight">`
                 + (escaped ? code : escape(code, true))
                 + '</code></pre>\n';
         }
-
-        return '<pre><code class="highlight language-'
+        return `<pre id="${id(code)}"><code id="${id('code' + code)}" class="highlight language-`
             + escape(lang)
             + '">'
             + (escaped ? code : escape(code, true))
@@ -30,6 +29,12 @@ const renderer = {
         return `<h${level} id="${id(text)}"><a href="#${id(text)}" id="${id(text + '_link')}" tabindex="-1">${text}</a></h${level}>\n`;
     },
 
+    list(body, ordered, start) {
+        const type = ordered ? 'ol' : 'ul';
+        const startatt = (ordered && start !== 1) ? (' start="' + start + '"') : '';
+        return `<${type}${startatt} id="${id(body)}">\n${body}</${type}>\n`;
+    },
+
     listitem(text, task, checked) {
         return `<li id="${id(text)}">${text}</li>\n`;
     },
@@ -44,8 +49,19 @@ const renderer = {
         return `<p id="${id(text)}">${text}</p>\n`;
     },
 
+    table(header, body) {
+        if (body) body = `<tbody id="${id(body)}">${body}</tbody>`;
+    
+        return '<table id="'+ id(header + body) +'">\n'
+            + '<thead id="'+ id(header) +'">\n'
+            + header
+            + '</thead>\n'
+            + body
+            + '</table>\n';
+    },
+
     tablerow(content) {
-        return `<tr>\n${content}</tr>\n`;
+        return `<tr id="${id}">\n${content}</tr>\n`;
     },
 
     tablecell(content, flags) {
