@@ -20,7 +20,11 @@ document.addEventListener('DOMContentLoaded', function () {
         document.querySelector('.category').innerHTML = fileInfo.doc.toc;
     })
     .then(() => {
-        Noter(document.querySelector('.article'), {});
+        const article = document.querySelector('.article');
+        const noter = new Noter(article);
+        article.addEventListener('mouseup', () => {
+            noter.addHighlights(noter.getSelectionRects());
+        });
     })
     .then(() => {
         document.querySelectorAll('a.open-in-browser').forEach((link) => {

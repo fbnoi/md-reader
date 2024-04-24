@@ -105,20 +105,9 @@ const renderer = {
         return out;
     },
 
-    // image(href, title, text) {
-    //     const cleanHref = cleanUrl(href);
-    //     if (cleanHref === null) {
-    //         return text;
-    //     }
-    //     href = cleanHref;
-
-    //     let out = `<img src="${href}" alt="${text}"`;
-    //     if (title) {
-    //         out += ` title="${title}" id="${id(text)}"`;
-    //     }
-    //     out += '>';
-    //     return out;
-    // },
+    text(text) {
+        return `<span id="${id(text)}">${text}</span>`
+    }
 }
 
 module.exports = renderer

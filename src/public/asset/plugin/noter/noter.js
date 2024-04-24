@@ -4,152 +4,214 @@
             (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Noter = factory());
 }(this, (function () {
     'use strict';
-    // for (let index = 0; index < element.children.length; index++) {
-    //     const child = element.children[index];
-    //     const cc = document.createElement('div');
-    //     cc.style.position = 'absolute';
-    //     cc.style.top = '0';
-    //     cc.style.left = '0';
-    //     cc.style.right = '0';
-    //     cc.style.bottom = '0';
-    //     cc.style.pointerEvents = 'none';
-    //     child.append(cc);
-    //     child.classList.add('konva-anchor');
-    //     const stage = new Konva.Stage({
-    //         container: cc,
-    //         width: cc.clientWidth,
-    //         height: getContentHeight(cc),
-    //     });
-    //     const layer = new Konva.Layer();
-    //     stage.add(layer);
-    //     child.addEventListener('mouseup', () => {
-    //         const aaa = child.getBoundingClientRect();
-    //         const {
-    //             startContainer, // 起始节点
-    //             startOffset, // 起始节点偏移量
-    //             endContainer, // 终止节点
-    //             endOffset // 终止节点偏移量
-    //         } = document.getSelection().getRangeAt(0);
-    //         console.log(startContainer.parentElement.childNodes);
-    //         console.log(startContainer);
-    //         console.log(endContainer.parentElement);
-    //         // 创建一个 range 对象
-    //         const range = document.createRange()
-    //         // 设置需要获取位置信息的文本节点以及偏移量
-    //         range.setStart(startContainer, startOffset)
-    //         range.setEnd(endContainer, endOffset)
-    //         // 通过 getBoundingClientRect 获取位置信息
-    //         const rect = range.getBoundingClientRect();
-    //         // create shape
-    //         const box = new Konva.Rect({
-    //             x: rect.x - aaa.x,
-    //             y: rect.y - aaa.y,
-    //             // x:0,
-    //             // y:0,
-    //             width: rect.width,
-    //             height: rect.height,
-    //             fill: '#00D2FF',
-    //             stroke: 'black',
-    //             strokeWidth: 4,
-    //             draggable: true,
-    //         });
-    //         layer.add(box);
-    //         // add cursor styling
-    //         box.on('mouseover', function () {
-    //             document.body.style.cursor = 'pointer';
-    //         });
-    //         box.on('mouseout', function () {
-    //             document.body.style.cursor = 'default';
-    //         });
-    //     });
-    // }
 
-    const Noter = function Noter(elem) {
-        this.layers = {};
-        this.container = elem;
-        for (let index = 0; index < elem.children.length; index++) {
-            this._addStages(elem.children[index]);
-            elem.children[index].addEventListener('mouseup', () => {
-                this.highlightRanges(this.getSelectionRanges());
+    class Rect {
+        constructor(x, y, width, height) {
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+        }
+
+        static Factory(range) {
+            const {x, y, width, height} = range.getBoundingClientRect();
+
+            return new Rect(x, y, width, height);
+        }
+    }
+    
+    class Box {
+        static Factory(x, y, width, height) {
+            return new new Konva.Rect({
+                x, y, width, height,
+                fill: '#00D2FF',
+                stroke: 'black',
+                strokeWidth: 4,
+                draggable: true,
             });
         }
     }
 
-    Noter.prototype.getSelectionRanges = function () {
-        const { startContainer, startOffset, endContainer, endOffset } = document.getSelection().getRangeAt(0);
-        const nodes = getTextNodesByDfs(startContainer, endContainer);
-        const ranges = [];
-        nodes.forEach(node => {
-            let start = node === startContainer ? startOffset : 0;
-            let end = node === endContainer ? endOffset : node.textContent.length;
-            ranges.push(...splitRange(node, start, end));
-        });
-        return ranges;
-    }
+    class Selection {
+        constructor(startContainer, startOffset, endContainer, endOffset) {
+            this.startContainer = startContainer;
+            this.startOffset = startOffset;
+            this.endContainer = endContainer;
+            this.endOffset = endOffset;
+        }
 
-    Noter.prototype.highlightRanges = function (rects) {
-        rects.forEach(rect => {
-            let textContainer = document.getElementById(rect.textContainerId);
-            let noterContainer = textContainer.classList.contains('konva-anchor') ?
-                textContainer : getParentByClass(textContainer, 'konva-anchor');
-                console.log(noterContainer);
-            let layer = this.layers[noterContainer.id];
-            if (layer) {
-                const range = document.createRange();
-                let textNode = getFirstTextNode(textContainer);
-                range.setStart(textNode, rect.startOffset);
-                range.setEnd(textNode, rect.endOffset);
-                let nc = noterContainer.getBoundingClientRect();
-                let sc = range.getBoundingClientRect();
-                console.log(sc.x - nc.x, sc.y - nc.y);
-                const box = new Konva.Rect({
-                    x: sc.x - nc.x,
-                    y: sc.y - nc.y,
-                    width: sc.width,
-                    height: sc.height,
-                    fill: '#00D2FF',
-                    stroke: 'black',
-                    strokeWidth: 4,
-                    draggable: true,
-                });
-                layer.add(box);
+        getRects() {
+            const nodes = getTextNodesByDfs(this.startContainer, this.endContainer);
+            const rects = [];
+            nodes.forEach(node => {
+                let start = node === this.startContainer ? this.startOffset : 0;
+                let end = node === this.endContainer ? this.endOffset : node.textContent.length;
+                rects.push(...Selection.SplitRange(node, start, end));
+            });
+            return rects;
+        }
+
+        static SplitRange(node, startOffset, endOffset) {
+            const range = document.createRange();
+            range.setStart(node, startOffset);
+            const rowTop = Selection.getCharTop(node, startOffset);
+            if ((endOffset - startOffset < 2) || rowTop === Selection.getCharTop(node, endOffset - 1)) {
+                range.setEnd(node, endOffset);
+                return [Rect.Factory(range)];
+            } else {
+                const last = Selection.findRowLastChar(rowTop, node, startOffset, endOffset - 1);
+                range.setEnd(node, last + 1);
+                const others = Selection.SplitRange(node, last + 1, endOffset);
+                return [Rect.Factory(range), ...others];
             }
-        });
+        }
+
+        static findRowLastChar(top, node, start, end) {
+            if (end - start === 1) {
+                return Selection.getCharTop(node, end) === top ? end : start;
+            }
+            const mid = (end + start) >> 1;
+            return Selection.getCharTop(node, mid) === top
+                ? Selection.findRowLastChar(top, node, mid, end)
+                : Selection.findRowLastChar(top, node, start, mid);
+        }
+    
+        static getCharTop(node, offset) {
+            return Selection.getCharRect(node, offset).top;
+        }
+    
+        static getCharRect(node, offset) {
+            const range = document.createRange();
+            range.setStart(node, offset);
+            let length = node.textContent ? node.textContent.length : 0;
+            range.setEnd(node, offset + 1 > length ? offset : offset + 1);
+            return range.getBoundingClientRect();
+        }
+
+        static getFirstTextNode(node) {
+            for (var i = 0; i < node.childNodes.length; i++) {
+                var childNode = node.childNodes[i];
+                if (childNode.nodeType === Node.TEXT_NODE && childNode.nodeValue.trim() !== '') {
+                    return childNode;
+                } else if (childNode.nodeType === Node.ELEMENT_NODE) {
+                    var result = getFirstTextNode(childNode);
+                    if (result) {
+                        return result;
+                    }
+                }
+            }
+            return null;
+        }
     }
 
-    Noter.prototype.removeRanges = function (ranges) {
+    class Stage {
+        constructor(elem) {
+            this.boxes = [];
+            this.elem = elem;
+            this.cc = document.createElement('div');
+            this.cc.style.position = 'absolute';
+            this.cc.style.top = '0';
+            this.cc.style.left = '0';
+            this.cc.style.right = '0';
+            this.cc.style.bottom = '0';
+            this.cc.style.pointerEvents = 'none';
+            this.elem.append(this.cc);
+            const { width, height } = this.getContainerSize();
+            this.rel = new Konva.Stage({
+                container: this.cc,
+                width, height
+            });
+            this.layer = new Konva.Layer();
+            this.rel.add(this.layer);
+        }
+
+        addBox(rect) {
+            const {x, y}  = this.cc.getBoundingClientRect();
+            const box = Box.Factory(rect.x - x, rect.y - y, rect.width, rect.height);
+            this.layer.add(box);
+        }
+
+        clear() {
+            this.layer.destroyChildren();
+        }
+
+        redrew() {
+            this.resize();
+        }
+
+        getContainerSize() {
+            return this.cc.getBoundingClientRect();
+        }
+
+        resize() {
+            const { width, height } = this.getContainerSize();
+            this.rel.size({width: width, height: height});
+        }
+
+        static Factory(elem) {
+            return new Stage(elem);
+        }
     }
 
-    Noter.prototype._addStages = function (elem) {
-        const cc = document.createElement('div');
-        cc.style.position = 'absolute';
-        cc.style.top = '0';
-        cc.style.left = '0';
-        cc.style.right = '0';
-        cc.style.bottom = '0';
-        cc.style.pointerEvents = 'none';
-        elem.append(cc);
-        elem.classList.add('konva-anchor');
-        const stage = new Konva.Stage({
-            container: cc,
-            width: cc.clientWidth,
-            height: getContentHeight(cc),
-        });
-        const layer = new Konva.Layer();
-        stage.add(layer);
-        this.layers[elem.id] = layer;
+    function debounce(func, wait) {  
+        let timeout;
+        return function() {  
+            const context = this;  
+            const args = arguments;  
+            clearTimeout(timeout);  
+            timeout = setTimeout(function() {  
+                func.apply(context, args);  
+            }, wait);  
+        };  
     }
 
-    function highlightRange(rect) {
-        // const textContainer = 
-    }
+    class Noter {
+        constructor(elem) {
+            this.container = elem;
+            this.stages = [];
+            for (let index = 0; index < elem.children.length; index++) {
+                const child = elem.children[index];
+                this.stages.push(Stage.Factory(child));
+            }
+            this.observeResize();
+            this.rects = [];
+        }
 
-    function removeHighlightRange(rect) {
+        addHighlights(rects) {
+            this.rects.push(...rects);
+            rects.forEach((rect) => this.highlightRect(rect), this);
+        }
 
-    }
+        highlightRect(rect) {
+            this.stages
+                .filter(stage => {
+                    return stage.elem.id === rect.id || stage.elem.querySelector(`[id="${rect.id}"]`) !== null;
+                })
+                .forEach(stage => {
+                    stage.addBox(rect);
+                });
+        }
 
-    function getContentHeight(element) {
-        return Math.max(element.scrollHeight, element.clientHeight);
+        getSelectionRects() {
+            const { startContainer, startOffset, endContainer, endOffset } = document.getSelection().getRangeAt(0);
+            const nodes = getTextNodesByDfs(startContainer, endContainer);
+            const rects = [];
+            nodes.forEach(node => {
+                let start = node === startContainer ? startOffset : 0;
+                let end = node === endContainer ? endOffset : node.textContent.length;
+                rects.push(...Rect.SplitRange(node, start, end));
+            });
+            return rects;
+        }
+        
+        observeResize() {
+            const observer = new ResizeObserver(debounce(this.handleResize.bind(this), 250))
+            observer.observe(this.container)
+        }
+
+        handleResize() {
+            this.stages.forEach(stage => stage.redrew(), this);
+        }
     }
 
     function getTextNodesByDfs(start, end) {
@@ -182,64 +244,6 @@
         } else if (node.parentNode) {
             yield* nodeDfsGenerator(node.parentNode, true)
         }
-    }
-
-    function splitRange(node, startOffset, endOffset) {
-        const range = document.createRange();
-        const rowTop = getCharTop(node, startOffset);
-        if ((endOffset - startOffset < 2) || rowTop === getCharTop(node, endOffset - 1)) {
-            range.setStart(node, startOffset);
-            range.setEnd(node, endOffset);
-            return [rectFactory(range)];
-        } else {
-            const last = findRowLastChar(rowTop, node, startOffset, endOffset - 1);
-            range.setStart(node, startOffset);
-            range.setEnd(node, last + 1);
-            const others = splitRange(node, last + 1, endOffset);
-            return [rectFactory(range), ...others];
-        }
-    }
-
-    function rectFactory(range) {
-        return {
-            // id: 
-            textContainerId: range.startContainer.parentElement.id,
-            startOffset: range.startOffset,
-            endOffset: range.endOffset,
-        };
-    }
-
-    function findRowLastChar(top, node, start, end) {
-        if (end - start === 1) {
-            return getCharTop(node, end) === top ? end : start;
-        }
-        const mid = (end + start) >> 1;
-        return getCharTop(node, mid) === top
-            ? findRowLastChar(top, node, mid, end)
-            : findRowLastChar(top, node, start, mid);
-    }
-
-    function getCharTop(node, offset) {
-        return getCharRect(node, offset).top;
-    }
-
-    function getCharRect(node, offset) {
-        const range = document.createRange();
-        range.setStart(node, offset);
-        let length = node.textContent ? node.textContent.length : 0;
-        range.setEnd(node, offset + 1 > length ? offset : offset + 1);
-        return range.getBoundingClientRect();
-    }
-
-    function getParentByClass(elem, className) {
-        var parent = elem.parentElement;
-        while (parent && parent !== document) {
-            if (parent.classList.contains(className)) {
-                return parent;
-            }
-            parent = parent.parentNode;
-        }
-        return null;
     }
 
     function getFirstTextNode(node) {
