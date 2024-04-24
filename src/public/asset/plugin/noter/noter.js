@@ -26,9 +26,8 @@
             return new Konva.Rect({
                 x, y, width, height,
                 fill: '#00D2FF',
-                stroke: 'black',
-                strokeWidth: 4,
-                draggable: true,
+                draggable: false,
+                opacity: 0.3
             });
         }
     }
@@ -39,6 +38,25 @@
             this.startOffset = startOffset;
             this.endContainer = endContainer;
             this.endOffset = endOffset;
+        }
+
+        static serialize(selection) {
+            return JSON.stringify({
+                startElemId: selection.startContainer.parentElement.id,
+                startOffset: selection.startOffset,
+                endElemId: selection.endContainer.parentElement.id,
+                endOffset: selection.endOffset,
+            });
+        }
+
+        static unserialize(str) {
+            const obj = JSON.parse(str);
+            const startElem = document.getElementById(obj.startElemId);
+            const endElem = document.getElementById(obj.endElemId);
+            const startContainer = getFirstTextNode(startElem);
+            const endContainer = getFirstTextNode(endElem);
+
+            return new Selection(startContainer, obj.startOffset, endContainer, obj.endOffset);
         }
 
         getRects() {
@@ -207,8 +225,18 @@
         }
 
         getSelection() {
-            const { startContainer, startOffset, endContainer, endOffset } = document.getSelection().getRangeAt(0);
-            return new Selection(startContainer, startOffset, endContainer, endOffset);
+            const selection = document.getSelection();
+            const range = selection.getRangeAt(0);
+            if (!selection.isCollapsed && !range.collapsed) {
+                return new Selection(
+                    range.startContainer, 
+                    range.startOffset, 
+                    range.endContainer, 
+                    range.endOffset
+                );
+            }
+            
+            return null;
         }
         
         observeResize() {
@@ -226,6 +254,14 @@
                     this.highlightRect(rect);
                 }, this);
             }, this);
+        }
+
+        serialize(selection) {
+            return Selection.serialize(selection);
+        }
+
+        unserialize(str) {
+            return Selection.unserialize(str);
         }
     }
 

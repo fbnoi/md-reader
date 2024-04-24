@@ -23,7 +23,10 @@ document.addEventListener('DOMContentLoaded', function () {
         const article = document.querySelector('.article');
         const noter = new Noter(article);
         article.addEventListener('mouseup', () => {
-            noter.highlightSelection(noter.getSelection());
+            const selection = noter.getSelection();
+            if (selection) {
+                noter.highlightSelection(selection);
+            }
         });
     })
     .then(() => {
