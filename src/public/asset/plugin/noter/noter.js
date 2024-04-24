@@ -6,23 +6,24 @@
     'use strict';
 
     class Rect {
-        constructor(x, y, width, height) {
+        constructor(containerId, x, y, width, height) {
+            this.containerId = containerId;
             this.x = x;
             this.y = y;
             this.width = width;
             this.height = height;
         }
 
-        static Factory(range) {
+        static Factory(containerId, range) {
             const {x, y, width, height} = range.getBoundingClientRect();
 
-            return new Rect(x, y, width, height);
+            return new Rect(containerId, x, y, width, height);
         }
     }
     
     class Box {
         static Factory(x, y, width, height) {
-            return new new Konva.Rect({
+            return new Konva.Rect({
                 x, y, width, height,
                 fill: '#00D2FF',
                 stroke: 'black',
@@ -46,23 +47,24 @@
             nodes.forEach(node => {
                 let start = node === this.startContainer ? this.startOffset : 0;
                 let end = node === this.endContainer ? this.endOffset : node.textContent.length;
-                rects.push(...Selection.SplitRange(node, start, end));
+                rects.push(...Selection.splitRange(node, start, end));
             });
             return rects;
         }
 
-        static SplitRange(node, startOffset, endOffset) {
+        static splitRange(node, startOffset, endOffset) {
             const range = document.createRange();
             range.setStart(node, startOffset);
             const rowTop = Selection.getCharTop(node, startOffset);
+            const id = Stage.getOutContainer(node).id;
             if ((endOffset - startOffset < 2) || rowTop === Selection.getCharTop(node, endOffset - 1)) {
                 range.setEnd(node, endOffset);
-                return [Rect.Factory(range)];
+                return [Rect.Factory(id, range)];
             } else {
                 const last = Selection.findRowLastChar(rowTop, node, startOffset, endOffset - 1);
                 range.setEnd(node, last + 1);
-                const others = Selection.SplitRange(node, last + 1, endOffset);
-                return [Rect.Factory(range), ...others];
+                const others = Selection.splitRange(node, last + 1, endOffset);
+                return [Rect.Factory(id, range), ...others];
             }
         }
 
@@ -115,7 +117,9 @@
             this.cc.style.right = '0';
             this.cc.style.bottom = '0';
             this.cc.style.pointerEvents = 'none';
+            this.cc.style.overflow = 'hidden';
             this.elem.append(this.cc);
+            this.elem.classList.add('noter');
             const { width, height } = this.getContainerSize();
             this.rel = new Konva.Stage({
                 container: this.cc,
@@ -135,10 +139,6 @@
             this.layer.destroyChildren();
         }
 
-        redrew() {
-            this.resize();
-        }
-
         getContainerSize() {
             return this.cc.getBoundingClientRect();
         }
@@ -150,6 +150,17 @@
 
         static Factory(elem) {
             return new Stage(elem);
+        }
+
+        static getOutContainer(elem) {
+            var parent = elem.parentElement;
+            while (parent && parent !== document) {
+                if (parent.classList.contains('noter')) {
+                    return parent;
+                }
+                parent = parent.parentNode;
+            }
+            return null;
         }
     }
 
@@ -169,39 +180,35 @@
         constructor(elem) {
             this.container = elem;
             this.stages = [];
+            this.selections = [];
             for (let index = 0; index < elem.children.length; index++) {
                 const child = elem.children[index];
                 this.stages.push(Stage.Factory(child));
             }
             this.observeResize();
-            this.rects = [];
+            
         }
 
-        addHighlights(rects) {
-            this.rects.push(...rects);
-            rects.forEach((rect) => this.highlightRect(rect), this);
+        highlightSelection(selection) {
+            this.selections.push(selection);
+            selection.getRects().forEach((rect) => {
+                this.highlightRect(rect);
+            }, this);
         }
 
         highlightRect(rect) {
             this.stages
                 .filter(stage => {
-                    return stage.elem.id === rect.id || stage.elem.querySelector(`[id="${rect.id}"]`) !== null;
+                    return stage.elem.id === rect.containerId || stage.elem.querySelector(`[id="${rect.containerId}"]`) !== null;
                 })
                 .forEach(stage => {
                     stage.addBox(rect);
                 });
         }
 
-        getSelectionRects() {
+        getSelection() {
             const { startContainer, startOffset, endContainer, endOffset } = document.getSelection().getRangeAt(0);
-            const nodes = getTextNodesByDfs(startContainer, endContainer);
-            const rects = [];
-            nodes.forEach(node => {
-                let start = node === startContainer ? startOffset : 0;
-                let end = node === endContainer ? endOffset : node.textContent.length;
-                rects.push(...Rect.SplitRange(node, start, end));
-            });
-            return rects;
+            return new Selection(startContainer, startOffset, endContainer, endOffset);
         }
         
         observeResize() {
@@ -210,7 +217,15 @@
         }
 
         handleResize() {
-            this.stages.forEach(stage => stage.redrew(), this);
+            this.stages.forEach(stage => {
+                stage.clear();
+                stage.resize();
+            }, this);
+            this.selections.forEach((selection) => {
+                selection.getRects().forEach((rect) => {
+                    this.highlightRect(rect);
+                }, this);
+            }, this);
         }
     }
 
@@ -264,5 +279,4 @@
     function index(element, options) { return new Noter(element, options); }
 
     return index;
-
 })));
