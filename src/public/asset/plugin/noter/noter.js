@@ -16,7 +16,6 @@
 
         static Factory(containerId, range) {
             const {x, y, width, height} = range.getBoundingClientRect();
-
             return new Rect(containerId, x, y, width, height);
         }
     }
@@ -130,13 +129,10 @@
             this.elem = elem;
             this.cc = document.createElement('div');
             this.cc.style.position = 'absolute';
-            this.cc.style.top = '0';
-            this.cc.style.left = '0';
-            this.cc.style.right = '0';
-            this.cc.style.bottom = '0';
-            this.cc.style.pointerEvents = 'none';
+            this.cc.style.pointerEvents = 'all';
+            this.cc.style.inset = '0';
             this.cc.style.overflow = 'hidden';
-            this.elem.append(this.cc);
+            this.elem.prepend(this.cc);
             this.elem.classList.add('noter');
             const { width, height } = this.getContainerSize();
             this.rel = new Konva.Stage({
@@ -149,7 +145,10 @@
 
         addBox(rect) {
             const {x, y}  = this.cc.getBoundingClientRect();
-            const box = Box.Factory(rect.x - x, rect.y - y, rect.width, rect.height);
+            let box = Box.Factory(rect.x - x, rect.y - y, rect.width, rect.height);
+            box.on('click', (evt) => {
+                console.log(evt);
+            });
             this.layer.add(box);
         }
 
