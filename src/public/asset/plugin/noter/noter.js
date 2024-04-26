@@ -5,6 +5,120 @@
 }(this, (function () {
     'use strict';
 
+    class util {
+        static debounce(func, wait) {  
+            let timeout;
+            return function() {  
+                const context = this;  
+                const args = arguments;  
+                clearTimeout(timeout);  
+                timeout = setTimeout(function() {  
+                    func.apply(context, args);  
+                }, wait);  
+            };  
+        }
+
+        static splitRange(node, startOffset, endOffset) {
+            const range = document.createRange();
+            range.setStart(node, startOffset);
+            const rowTop = util.getCharTop(node, startOffset);
+            const id = Stage.getOutContainer(node).id;
+            if ((endOffset - startOffset < 2) || rowTop === util.getCharTop(node, endOffset - 1)) {
+                range.setEnd(node, endOffset);
+                return [Rect.Factory(id, range)];
+            } else {
+                const last = util.findRowLastChar(rowTop, node, startOffset, endOffset - 1);
+                range.setEnd(node, last + 1);
+                const others = util.splitRange(node, last + 1, endOffset);
+                return [Rect.Factory(id, range), ...others];
+            }
+        }
+
+        static findRowLastChar(top, node, start, end) {
+            if (end - start === 1) {
+                return util.getCharTop(node, end) === top ? end : start;
+            }
+            const mid = (end + start) >> 1;
+            return util.getCharTop(node, mid) === top
+                ? util.findRowLastChar(top, node, mid, end)
+                : util.findRowLastChar(top, node, start, mid);
+        }
+    
+        static getCharTop(node, offset) {
+            return util.getCharRect(node, offset).top;
+        }
+    
+        static getCharRect(node, offset) {
+            const range = document.createRange();
+            range.setStart(node, offset);
+            let length = node.textContent ? node.textContent.length : 0;
+            range.setEnd(node, offset + 1 > length ? offset : offset + 1);
+            return range.getBoundingClientRect();
+        }
+
+        static getFirstTextNode(node) {
+            for (var i = 0; i < node.childNodes.length; i++) {
+                var childNode = node.childNodes[i];
+                if (childNode.nodeType === Node.TEXT_NODE && childNode.nodeValue.trim() !== '') {
+                    return childNode;
+                } else if (childNode.nodeType === Node.ELEMENT_NODE) {
+                    var result = util.getFirstTextNode(childNode);
+                    if (result) {
+                        return result;
+                    }
+                }
+            }
+            return null;
+        }
+
+        static getTextNodesByDfs(start, end) {
+            if (start === end) return [start];
+            const iterator = util.nodeDfsGenerator(start, false);
+            const textNodes = [];
+            let node = iterator.next();
+            let value = node.value;
+            while (value && value !== end) {
+                if (value.nodeType === Node.TEXT_NODE) {
+                    !/^\n$/.test(value.textContent) &&
+                        !/^$/.test(value.textContent) &&
+                        textNodes.push(value);
+                }
+                value = iterator.next().value;
+            }
+            if (!value) {
+                return []
+            }
+            textNodes.push(end);
+            return textNodes;
+        }
+    
+        static *nodeDfsGenerator (node, isGoBack = false) {
+            yield node
+            if (!isGoBack && node.childNodes.length > 0) {
+                yield* util.nodeDfsGenerator(node.childNodes[0], false)
+            } else if (node.nextSibling) {
+                yield* util.nodeDfsGenerator(node.nextSibling, false)
+            } else if (node.parentNode) {
+                yield* util.nodeDfsGenerator(node.parentNode, true)
+            }
+        }
+    
+        static getFirstTextNode(node) {
+            for (var i = 0; i < node.childNodes.length; i++) {
+                var childNode = node.childNodes[i];
+                if (childNode.nodeType === Node.TEXT_NODE && childNode.nodeValue.trim() !== '') {
+                    return childNode;
+                } else if (childNode.nodeType === Node.ELEMENT_NODE) {
+                    var result = util.getFirstTextNode(childNode);
+                    if (result) {
+                        return result;
+                    }
+                }
+            }
+            return null;
+        }
+    }
+
     class Rect {
         constructor(containerId, x, y, width, height) {
             this.containerId = containerId;
@@ -52,74 +166,29 @@
             const obj = JSON.parse(str);
             const startElem = document.getElementById(obj.startElemId);
             const endElem = document.getElementById(obj.endElemId);
-            const startContainer = getFirstTextNode(startElem);
-            const endContainer = getFirstTextNode(endElem);
+            const startContainer = util.getFirstTextNode(startElem);
+            const endContainer = util.getFirstTextNode(endElem);
 
             return new Selection(startContainer, obj.startOffset, endContainer, obj.endOffset);
         }
 
         getRects() {
-            const nodes = getTextNodesByDfs(this.startContainer, this.endContainer);
+            const nodes = util.getTextNodesByDfs(this.startContainer, this.endContainer);
             const rects = [];
             nodes.forEach(node => {
                 let start = node === this.startContainer ? this.startOffset : 0;
                 let end = node === this.endContainer ? this.endOffset : node.textContent.length;
-                rects.push(...Selection.splitRange(node, start, end));
+                rects.push(...util.splitRange(node, start, end));
             });
             return rects;
         }
+    }
 
-        static splitRange(node, startOffset, endOffset) {
-            const range = document.createRange();
-            range.setStart(node, startOffset);
-            const rowTop = Selection.getCharTop(node, startOffset);
-            const id = Stage.getOutContainer(node).id;
-            if ((endOffset - startOffset < 2) || rowTop === Selection.getCharTop(node, endOffset - 1)) {
-                range.setEnd(node, endOffset);
-                return [Rect.Factory(id, range)];
-            } else {
-                const last = Selection.findRowLastChar(rowTop, node, startOffset, endOffset - 1);
-                range.setEnd(node, last + 1);
-                const others = Selection.splitRange(node, last + 1, endOffset);
-                return [Rect.Factory(id, range), ...others];
-            }
-        }
-
-        static findRowLastChar(top, node, start, end) {
-            if (end - start === 1) {
-                return Selection.getCharTop(node, end) === top ? end : start;
-            }
-            const mid = (end + start) >> 1;
-            return Selection.getCharTop(node, mid) === top
-                ? Selection.findRowLastChar(top, node, mid, end)
-                : Selection.findRowLastChar(top, node, start, mid);
-        }
-    
-        static getCharTop(node, offset) {
-            return Selection.getCharRect(node, offset).top;
-        }
-    
-        static getCharRect(node, offset) {
-            const range = document.createRange();
-            range.setStart(node, offset);
-            let length = node.textContent ? node.textContent.length : 0;
-            range.setEnd(node, offset + 1 > length ? offset : offset + 1);
-            return range.getBoundingClientRect();
-        }
-
-        static getFirstTextNode(node) {
-            for (var i = 0; i < node.childNodes.length; i++) {
-                var childNode = node.childNodes[i];
-                if (childNode.nodeType === Node.TEXT_NODE && childNode.nodeValue.trim() !== '') {
-                    return childNode;
-                } else if (childNode.nodeType === Node.ELEMENT_NODE) {
-                    var result = getFirstTextNode(childNode);
-                    if (result) {
-                        return result;
-                    }
-                }
-            }
-            return null;
+    class Group {
+        static Factory(selection) {
+            selection.getRects().forEach(rect => {
+                
+            });
         }
     }
 
@@ -262,53 +331,6 @@
         unserialize(str) {
             return Selection.unserialize(str);
         }
-    }
-
-    function getTextNodesByDfs(start, end) {
-        if (start === end) return [start];
-        const iterator = nodeDfsGenerator(start, false);
-        const textNodes = [];
-        let node = iterator.next();
-        let value = node.value;
-        while (value && value !== end) {
-            if (value.nodeType === Node.TEXT_NODE) {
-                !/^\n$/.test(value.textContent) &&
-                    !/^$/.test(value.textContent) &&
-                    textNodes.push(value);
-            }
-            value = iterator.next().value;
-        }
-        if (!value) {
-            return []
-        }
-        textNodes.push(end);
-        return textNodes;
-    }
-
-    function* nodeDfsGenerator(node, isGoBack = false) {
-        yield node
-        if (!isGoBack && node.childNodes.length > 0) {
-            yield* nodeDfsGenerator(node.childNodes[0], false)
-        } else if (node.nextSibling) {
-            yield* nodeDfsGenerator(node.nextSibling, false)
-        } else if (node.parentNode) {
-            yield* nodeDfsGenerator(node.parentNode, true)
-        }
-    }
-
-    function getFirstTextNode(node) {
-        for (var i = 0; i < node.childNodes.length; i++) {
-            var childNode = node.childNodes[i];
-            if (childNode.nodeType === Node.TEXT_NODE && childNode.nodeValue.trim() !== '') {
-                return childNode;
-            } else if (childNode.nodeType === Node.ELEMENT_NODE) {
-                var result = getFirstTextNode(childNode);
-                if (result) {
-                    return result;
-                }
-            }
-        }
-        return null;
     }
 
     function index(element, options) { return new Noter(element, options); }
