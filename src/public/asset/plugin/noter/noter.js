@@ -151,6 +151,7 @@
             this.startOffset = startOffset;
             this.endContainer = endContainer;
             this.endOffset = endOffset;
+            this.rects = this.splitRects();
         }
 
         static serialize(selection) {
@@ -173,6 +174,10 @@
         }
 
         getRects() {
+            return this.rects;
+        }
+
+        splitRects() {
             const nodes = util.getTextNodesByDfs(this.startContainer, this.endContainer);
             const rects = [];
             nodes.forEach(node => {
@@ -182,25 +187,27 @@
             });
             return rects;
         }
-    }
 
-    class Group {
-        static Factory(selection) {
-            selection.getRects().forEach(rect => {
-                
-            });
+        refreshRects() {
+            this.rects = this.splitRects();
+        }
+
+        containPoint(x, y) {
+            return this.rects.filter(rect => {
+                return rect.x <= x && rect.x + rect.width >= x &&
+                    rect.y <= y && rect.y + rect.height >= y;
+            }).length > 0;
         }
     }
 
     class Stage {
         constructor(elem) {
-            this.boxes = [];
             this.elem = elem;
             this.cc = document.createElement('div');
             this.cc.style.position = 'absolute';
-            this.cc.style.pointerEvents = 'all';
             this.cc.style.inset = '0';
             this.cc.style.overflow = 'hidden';
+            this.cc.style.zIndex = -1;
             this.elem.prepend(this.cc);
             this.elem.classList.add('noter');
             const { width, height } = this.getContainerSize();
@@ -210,6 +217,25 @@
             });
             this.layer = new Konva.Layer();
             this.rel.add(this.layer);
+            this.rects = {};
+            this.boxes = {};
+        }
+
+        dispatchEvent(callable) {
+            this.elem.addEventListener('click', function(event) {
+                event.preventDefault();
+                callable(event);
+            });
+        }
+
+        rectsEvent(rects) {
+            for (const id in this.rects) {
+                const rect = this.rects[id];
+                if (rects.indexOf(rect) !== -1) {
+                    const box = this.boxes[id];
+                    box.fire('click', {});
+                }
+            }
         }
 
         addBox(rect) {
@@ -219,10 +245,14 @@
                 console.log(evt);
             });
             this.layer.add(box);
+            this.boxes[box.id] = box;
+            this.rects[box.id] = rect;
         }
 
         clear() {
             this.layer.destroyChildren();
+            this.boxes = {};
+            this.rects = {};
         }
 
         getContainerSize() {
@@ -250,18 +280,6 @@
         }
     }
 
-    function debounce(func, wait) {  
-        let timeout;
-        return function() {  
-            const context = this;  
-            const args = arguments;  
-            clearTimeout(timeout);  
-            timeout = setTimeout(function() {  
-                func.apply(context, args);  
-            }, wait);  
-        };  
-    }
-
     class Noter {
         constructor(elem) {
             this.container = elem;
@@ -272,7 +290,17 @@
                 this.stages.push(Stage.Factory(child));
             }
             this.observeResize();
-            
+            const _this = this;
+            this.container.addEventListener('mousemove', util.debounce(event => {
+                let selections = _this.selections.filter(selection => {
+                    return selection.containPoint(event.clientX, event.clientY);
+                });
+                if (selections.length > 0) {
+                    this.container.style.cursor = 'pointer';
+                } else {
+                    this.container.style.cursor = 'unset';
+                }
+            }, 5));
         }
 
         highlightSelection(selection) {
@@ -294,22 +322,29 @@
 
         getSelection() {
             const selection = document.getSelection();
-            const range = selection.getRangeAt(0);
-            if (!selection.isCollapsed && !range.collapsed) {
-                return new Selection(
-                    range.startContainer, 
-                    range.startOffset, 
-                    range.endContainer, 
-                    range.endOffset
-                );
+            if (!selection.isCollapsed) {
+                const range = selection.getRangeAt(0);
+                if (!range.collapsed) {
+                    return new Selection(
+                        range.startContainer, 
+                        range.startOffset, 
+                        range.endContainer, 
+                        range.endOffset
+                    );
+                }
             }
             
             return null;
         }
         
         observeResize() {
-            const observer = new ResizeObserver(debounce(this.handleResize.bind(this), 250))
+            const observer = new ResizeObserver(util.debounce(this.handleResize.bind(this), 250))
             observer.observe(this.container)
+        }
+
+        observeCursor(child) {
+            child.addEventListener();
+            observer.observe(this.container);
         }
 
         handleResize() {
@@ -318,6 +353,7 @@
                 stage.resize();
             }, this);
             this.selections.forEach((selection) => {
+                selection.refreshRects();
                 selection.getRects().forEach((rect) => {
                     this.highlightRect(rect);
                 }, this);
