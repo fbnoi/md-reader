@@ -1,7 +1,7 @@
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
         typeof define === 'function' && define.amd ? define(factory) :
-            (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Noter = factory());
+            (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.TextSelector = factory());
 }(this, (function () {
     'use strict';
 
@@ -280,27 +280,21 @@
         }
     }
 
-    class Noter {
+    class TextSelector {
         constructor(elem) {
             this.container = elem;
             this.stages = [];
             this.selections = [];
+            this.eventHandler = {select: [], clickSelects: []};
             for (let index = 0; index < elem.children.length; index++) {
                 const child = elem.children[index];
                 this.stages.push(Stage.Factory(child));
             }
+            this.tooltipDiv = this._createTip();
+            elem.append(this.tooltipDiv);
             this.observeResize();
-            const _this = this;
-            this.container.addEventListener('mousemove', util.debounce(event => {
-                let selections = _this.selections.filter(selection => {
-                    return selection.containPoint(event.clientX, event.clientY);
-                });
-                if (selections.length > 0) {
-                    this.container.style.cursor = 'pointer';
-                } else {
-                    this.container.style.cursor = 'unset';
-                }
-            }, 5));
+            this.observeCursor();
+            this.observeSelection();
         }
 
         highlightSelection(selection) {
@@ -338,16 +332,64 @@
         }
         
         observeResize() {
-            const observer = new ResizeObserver(util.debounce(this.handleResize.bind(this), 250))
+            const observer = new ResizeObserver(util.debounce(this._handleResize.bind(this), 250))
             observer.observe(this.container)
         }
 
-        observeCursor(child) {
-            child.addEventListener();
-            observer.observe(this.container);
+        observeCursor() {
+            this.container.addEventListener('mousemove', util.debounce(event => {
+                this.container.style.cursor = this.selections.filter(selection => {
+                    return selection.containPoint(event.clientX, event.clientY);
+                }).length > 0 ? 'pointer' : 'unset';
+            }, 5));
         }
 
-        handleResize() {
+        observeSelection() {
+            this.container.addEventListener('mouseup', util.debounce(() => {
+                const selection = this.getSelection();
+                if (selection) {
+                    this.fire('select', selection);
+                    let rects = selection.getRects();
+                    let rect = rects[rects.length - 1];
+                    let popper = new Popper({
+                        textContent: 'hello world',
+                        position: {
+                            x: rect.x + rect.width,
+                            y: rect.y
+                        }
+                    });
+                    popper.show();
+                }
+            }), 10);
+        }
+
+        fire(type, ...args) {
+            this.eventHandler[type].forEach(handler => {
+                handler.call(null, ...args);
+            });
+        }
+
+        on(type, callable) {
+            if (!this.eventHandler.hasOwnProperty(type)) {
+                console.error('undefined event type:', type);
+                return;
+            }
+            if (typeof callable !== 'function') {
+                console.error('callable must be a function, get', typeof callable);
+                return;
+            }
+            this.eventHandler[type].push(callable);
+        }
+
+        serialize(selection) {
+            return Selection.serialize(selection);
+        }
+
+        unserialize(str) {
+            return Selection.unserialize(str);
+        }
+
+        _handleResize() {
             this.stages.forEach(stage => {
                 stage.clear();
                 stage.resize();
@@ -360,16 +402,14 @@
             }, this);
         }
 
-        serialize(selection) {
-            return Selection.serialize(selection);
-        }
-
-        unserialize(str) {
-            return Selection.unserialize(str);
+        _createTip() {
+            const tipDiv = document.createElement('div');
+            tipDiv.textContent = "my tooltip";
+            return tipDiv;
         }
     }
 
-    function index(element, options) { return new Noter(element, options); }
+    function index(element, options) { return new TextSelector(element, options); }
 
     return index;
 })));

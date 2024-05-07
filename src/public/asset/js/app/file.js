@@ -21,12 +21,9 @@ document.addEventListener('DOMContentLoaded', function () {
     })
     .then(() => {
         const article = document.querySelector('.article');
-        const noter = new Noter(article);
-        article.addEventListener('mouseup', () => {
-            const selection = noter.getSelection();
-            if (selection) {
-                noter.highlightSelection(selection);
-            }
+        const selector = new TextSelector(article);
+        selector.on('select', selection => {
+            console.log(selection);
         });
     })
     .then(() => {
