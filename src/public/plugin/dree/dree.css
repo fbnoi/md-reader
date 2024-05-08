@@ -1,0 +1,65 @@
+.tree-container {
+    overflow-y: auto;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+}
+
+.tree-container > ul {
+    min-width: calc(100% - 30px);
+    padding: 0 15px;
+    list-style: none;
+    position: relative;
+}
+
+.tree-container li ul {
+    display: none;
+    list-style: none;
+    padding-left: 20px;
+}
+
+.tree-container li.expanded ul {
+    display: block;
+}
+
+.tree-container ul > li {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.tree-container ul > li > a {
+    text-decoration: none;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-size: 12px;
+    max-width: calc(100% - 20px);
+    display: inline-block;
+    height: 24px;
+    line-height: 24px;
+}
+
+.tree-container ul > li > a::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 24px;
+    cursor: pointer;
+}
+
+.tree-container ul > li > a > i {
+    margin-right: 10px;
+}
+
+.tree-container ul > li > a:hover::before {
+    background-color: rgba(100, 100, 100, 0.1);
+}
+
+.tree-container ul > li > a:active::before {
+    background-color: rgba(100, 100, 100, 0.2);
+}
+
+.tree-container ul > li > a.selected::before {
+    background-color: rgba(100, 100, 100, 0.2);
+}

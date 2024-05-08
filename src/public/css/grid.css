@@ -1,0 +1,50 @@
+.grid {
+    height: calc(100% - 20px);
+    display: grid;
+    grid-template-columns: 360px 5px 1fr;
+}
+
+.grid .main-view {
+    height: 100%;
+    overflow-y: hidden;
+    display: contents;
+}
+
+.grid .side-view {
+    height: 100%;
+    overflow-y: hidden;
+    display: grid;
+    grid-template-rows: 1fr 5px 0;
+}
+
+.grid .gutter {
+    border-color: rgba(100, 100, 100, 0.1);
+    background-color: rgba(100, 100, 100, 0);
+    background-clip: padding-box;
+}
+
+.grid .gutter:hover {
+    border-color: rgba(100, 100, 100, 0.2);
+    background-color: rgba(100, 100, 100, 0.1);
+}
+
+.grid .gutter:active {
+    border-color: rgba(100, 100, 100, 0.2);
+    background-color: rgba(100, 100, 100, 0.2);
+}
+
+.gutter-main {
+    border-left-width: 2px;
+    border-left-style: solid;
+    cursor: col-resize;
+    grid-row: 1/-1;
+    grid-column: 2;
+}
+
+.gutter-side {
+    border-bottom-width: 2px;
+    border-bottom-style: solid;
+    cursor: row-resize;
+    grid-column: 1/-1;
+    grid-row: 2;
+}

@@ -4,73 +4,83 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
-    mode: "development", // 或 'production'
+    mode: "development",
     entry: {
-        app: "./src/js/app.js",
-        plugin: "./src/js/plugin.js",
-        home: "./src/js/home.js",
-        // file: "./src/js/file.js",
-        // folder: "./src/js/folder.js"
+        app: "./src/public/js/app.js",
+        home: "./src/public/js/home.js",
+        file: "./src/public/js/file.js",
+        folder: "./src/public/js/folder.js"
     },
-    // devtool: false,
-    output: {  
-        path: path.resolve(__dirname, 'dist'),  
+    devtool: false,
+    output: {
+        path: path.resolve(__dirname, 'dist'),
         filename: 'js/[name].bundle.js' // 使用 [name] 占位符来根据入口点名称生成不同的 bundle 文件名
     },
     module: {
         rules: [
-            {  
-                test: /\.m?js$/,  
-                exclude: /(node_modules|bower_components)/,  
-                use: {
-                    loader: 'babel-loader',  
-                    options: {  
-                        presets: ['@babel/preset-env']
+            {
+                test: /\.m?js$/,
+                exclude: /(node_modules|bower_components)/,
+                use: [{
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['@babel/preset-env'],
                     }
-                }  
-            }, 
+                }]
+            },
             {
                 test: /\.css$/,
                 use: [MiniCssExtractPlugin.loader, "css-loader"],
             },
             {
                 test: /\.(png|svg|jpg|gif)$/,
-                use: ["file-loader"],
+                use: [{
+                    loader: "file-loader",
+                    options: {
+                        outputPath: 'image/',  // 指定输出到 dist 目录下的 fonts 子目录  
+                    },
+                }],
             },
-            // ... 其他 loader 配置
+            {
+                test: /\.(ttf|woff2)$/,
+                type: "asset/resource",
+                generator: {
+                    filename: "fonts/[name][ext]"
+                }
+            }
         ],
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: './src/html/home.html',
+            template: './src/public/html/home.html',
             filename: 'home.html',
-            chunks: ['home', 'app', 'plugin']
+            chunks: ['home', 'app']
         }),
-        // new HtmlWebpackPlugin({
-        //     template: './src/html/file.html',
-        //     filename: 'file.html',
-        //     chunks: ['file', 'app']
-        // }),
-        // new HtmlWebpackPlugin({
-        //     template: './src/html/folder.html',
-        //     filename: 'folder.html',
-        //     chunks: ['folder', 'app']
-        // }),
+        new HtmlWebpackPlugin({
+            template: './src/public/html/file.html',
+            filename: 'file.html',
+            chunks: ['file', 'app']
+        }),
+        new HtmlWebpackPlugin({
+            template: './src/public/html/folder.html',
+            filename: 'folder.html',
+            chunks: ['folder', 'app']
+        }),
         new CleanWebpackPlugin(), // 清理输出目录
         new MiniCssExtractPlugin({
             filename: "css/[name].[contenthash].css", // 提取 CSS 到单独的文件
         }),
         // ... 其他插件配置
     ],
-    optimization: {  
-        splitChunks: {  
-            cacheGroups: {  
-                vendor: {  
-                    test: /[\\/]node_modules[\\/]/,  
-                    name: 'vendors',  
-                    chunks: 'all'  
-                }  
-            }  
-        }  
+    optimization: {
+        splitChunks: {
+            cacheGroups: {
+                vendor: {
+                    test: /[\\/]node_modules[\\/]/,
+                    name: 'vendors',
+                    chunks: 'all'
+                }
+            }
+        }
     },
 };
