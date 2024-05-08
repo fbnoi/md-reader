@@ -6,7 +6,8 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 module.exports = {
     mode: "development", // 或 'production'
     entry: {
-        screen: "./src/js/screen.js",
+        app: "./src/js/app.js",
+        plugin: "./src/js/plugin.js",
         home: "./src/js/home.js",
         // file: "./src/js/file.js",
         // folder: "./src/js/folder.js"
@@ -43,17 +44,17 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: './src/html/home.html',
             filename: 'home.html',
-            chunks: ['home', 'screen']
+            chunks: ['home', 'app', 'plugin']
         }),
         // new HtmlWebpackPlugin({
         //     template: './src/html/file.html',
         //     filename: 'file.html',
-        //     chunks: ['file', 'screen']
+        //     chunks: ['file', 'app']
         // }),
         // new HtmlWebpackPlugin({
         //     template: './src/html/folder.html',
         //     filename: 'folder.html',
-        //     chunks: ['folder', 'screen']
+        //     chunks: ['folder', 'app']
         // }),
         new CleanWebpackPlugin(), // 清理输出目录
         new MiniCssExtractPlugin({
