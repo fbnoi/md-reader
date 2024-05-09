@@ -8,7 +8,7 @@ export class TextSelector {
         this.container = elem;
         this.stages = [];
         this.selections = [];
-        this.eventHandler = {select: [], clickSelects: []};
+        this.eventHandler = { select: [], clickSelects: [] };
         for (let index = 0; index < elem.children.length; index++) {
             const child = elem.children[index];
             this.stages.push(Stage.factory(child));
@@ -40,18 +40,19 @@ export class TextSelector {
         if (!selection.isCollapsed) {
             const range = selection.getRangeAt(0);
             if (!range.collapsed) {
-                return new Selection(
-                    range.startContainer, 
-                    range.startOffset, 
-                    range.endContainer, 
+                let select = new Selection(
+                    range.startContainer,
+                    range.startOffset,
+                    range.endContainer,
                     range.endOffset
                 );
+                return select.getRects().length > 0 ? select : null;
             }
         }
-        
+
         return null;
     }
-    
+
     observeResize() {
         const observer = new ResizeObserver(util.debounce(this._handleResize.bind(this), 250))
         observer.observe(this.container)
@@ -66,29 +67,25 @@ export class TextSelector {
     }
 
     observeSelection() {
-        const popper = new Popper({
-            position: {},
-            buttons: [{
+        const popper = new Popper();
+        popper.setButtons([
+            {
                 title: 'button',
-                onclick: (event) => {
+                onClick: (event) => {
                     console.log(event);
+                    popper.hide();
                 }
-            }]
-        });
+            }
+        ]);
         this.container.addEventListener('mouseup', util.debounce(() => {
             const selection = this.getSelection();
             if (selection) {
                 this.fire('select', selection);
                 let rects = selection.getRects();
                 let rect = rects[rects.length - 1];
-                popper.setOptions({position: {clientX: rect.x + rect.width, clientY: rect.y}, buttons: [{
-                    title: 'button',
-                    onClick: (event) => {
-                        console.log(event);
-                    }
-                }]});
+                console.log(rect);
                 popper.show();
-                console.log(popper);
+                popper.setPosition({clientX: rect.x + rect.width, clientY: rect.y});
             }
         }), 10);
     }

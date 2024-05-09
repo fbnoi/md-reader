@@ -10,44 +10,42 @@ const TPL = `
 
 export class Popper {
     constructor(options) {
-        this.clientX = options.position.clientX;
-        this.clientY = options.position.clientY;
-        this.options = options;
         this.div = document.createElement('div');
         this.div.classList.add('tooltip-container');
         this.div.innerHTML = TPL;
         document.body.appendChild(this.div);
+        if (options) {
+            options.position && this.setPosition(options.position);
+            options.buttons && this.setButtons(options.buttons);
+            options.position && this.setPosition(options.position);
+            options.position && this.setPosition(options.position);
+        }
         this.hide();
     }
 
-    setOptions(options) {
-        this.clientX = options.position.clientX;
-        this.clientY = options.position.clientY;
-        this.options = options;
-        this.updatePopper();
+    setPosition(position) {
+        this.clientX = position.clientX;
+        this.clientY = position.clientY;
+        this.div.style.top = (this.clientY + (this.clientY > 30 ? -1 : 0) * this.div.clientHeight + (this.clientY > 30 ? -1 : 1) * 6) + 'px';
+        this.div.style.left = (this.clientX - this.div.clientWidth / 2) + 'px';
+        const tooltip = this.div.querySelector('.tooltip');
+        this.clientY > 30 ? tooltip.classList.remove('tooltip-bottom') : tooltip.classList.add('tooltip-bottom');
     }
 
-    updatePopper() {
-        this.resetButtons();
-        this.div.style.top = this.calcTop() + 'px';
-        this.div.style.left = this.calcLect() + 'px';
-    }
-
-    resetButtons() {
-        const tooltipInner = this.div.querySelector('.tooltip-inner')
+    setButtons(buttons) {
+        const tooltipInner = this.div.querySelector('.tooltip-inner');
         tooltipInner.innerHTML = '';
-
-        this.options.buttons.forEach(button => {
+        buttons.forEach(button => {
             tooltipInner.appendChild(this.btnFactory(button));
         });
     }
 
-    calcTop() {
-        return this.clientY < 30 ? this.clientY : this.clientY - this.div.clientHeight;
+    show() {
+        this.div.style.display = 'inline-block';
     }
 
-    calcLect() {
-        return this.clientX - this.div.clientWidth / 2;
+    hide() {
+        this.div.style.display = 'none';
     }
 
     btnFactory(button) {
@@ -56,15 +54,5 @@ export class Popper {
         btn.addEventListener('click', evt => button.onClick && button.onClick(evt));
 
         return btn;
-    }
-
-    show() {
-        this.div.style.visibility = 'visible';
-        this.div.style.pointerEvents = 'all';
-    }
-
-    hide() {
-        this.div.style.visibility = 'none';
-        this.div.style.pointerEvents = 'none';
     }
 }

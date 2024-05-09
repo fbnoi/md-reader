@@ -21,12 +21,20 @@ export class Rect {
         const id = util.getOutContainer(node, '.noter').id;
         if ((endOffset - startOffset < 2) || rowTop === util.getCharTop(node, endOffset - 1)) {
             range.setEnd(node, endOffset);
-            return [Rect.factory(id, range)];
+            let rect = Rect.factory(id, range);
+            if (rect.width != 0) {
+                return [Rect.factory(id, range)];
+            }
+            return [];
         } else {
             const last = util.findRowLastChar(rowTop, node, startOffset, endOffset - 1);
             range.setEnd(node, last + 1);
             const others = Rect.splitRange(node, last + 1, endOffset);
-            return [Rect.factory(id, range), ...others];
+            let rect = Rect.factory(id, range);
+            if (rect.width != 0) {
+                return [Rect.factory(id, range), ...others];
+            }
+            return [...others];
         }
     }
 }

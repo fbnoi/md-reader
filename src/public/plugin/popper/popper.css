@@ -9,6 +9,8 @@
     padding: 4px 8px;
     font-size: 13px;
     border-radius: 4px;
+    cursor: pointer;
+    opacity: 0.7;
 }
 
 .tooltip .tooltip-arrow,
@@ -32,4 +34,13 @@
 
 .tooltip .tooltip-arrow-top {
     margin-top: -8px;
+    display: none;
+}
+
+.tooltip.tooltip-bottom .tooltip-arrow {
+    display: none;
+}
+
+.tooltip.tooltip-bottom .tooltip-arrow-top {
+    display: block;
 }
