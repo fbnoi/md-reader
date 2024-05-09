@@ -3,7 +3,7 @@ import '../css/toc.css';
 import '../css/article.css';
 import '../css/file-tree.css';
 
-import './lib/tool';
+import './common/tool';
 
 import Split from 'split-grid'
 import { TextSelector } from '../plugin/noter/noter'

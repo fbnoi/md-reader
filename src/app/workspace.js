@@ -80,6 +80,7 @@ const application = {
             }
         });
         this._win.setMenu(null);
+        this._win.maximize();
 
         return this._win;
     },

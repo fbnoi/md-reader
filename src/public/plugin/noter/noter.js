@@ -1,6 +1,7 @@
 import { util } from "./util";
 import { Stage } from "./stage";
 import { Selection } from "./selection";
+import { Popper } from "../popper/popper";
 
 export class TextSelector {
     constructor(elem) {
@@ -12,8 +13,6 @@ export class TextSelector {
             const child = elem.children[index];
             this.stages.push(Stage.factory(child));
         }
-        this.tooltipDiv = this._createTip();
-        elem.append(this.tooltipDiv);
         this.observeResize();
         this.observeCursor();
         this.observeSelection();
@@ -67,12 +66,29 @@ export class TextSelector {
     }
 
     observeSelection() {
+        const popper = new Popper({
+            position: {},
+            buttons: [{
+                title: 'button',
+                onclick: (event) => {
+                    console.log(event);
+                }
+            }]
+        });
         this.container.addEventListener('mouseup', util.debounce(() => {
             const selection = this.getSelection();
             if (selection) {
                 this.fire('select', selection);
                 let rects = selection.getRects();
                 let rect = rects[rects.length - 1];
+                popper.setOptions({position: {clientX: rect.x + rect.width, clientY: rect.y}, buttons: [{
+                    title: 'button',
+                    onClick: (event) => {
+                        console.log(event);
+                    }
+                }]});
+                popper.show();
+                console.log(popper);
             }
         }), 10);
     }
@@ -114,11 +130,5 @@ export class TextSelector {
                 this.highlightRect(rect);
             }, this);
         }, this);
-    }
-
-    _createTip() {
-        const tipDiv = document.createElement('div');
-        tipDiv.textContent = "my tooltip";
-        return tipDiv;
     }
 }

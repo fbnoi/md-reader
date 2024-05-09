@@ -1,8 +1,8 @@
 const { app, BrowserWindow } = require('electron');
-const { loadMainPage, loadFilePage } = require('./src/app/page');
-const bus = require('./src/app/bus');
-const { registerAPI } = require('./src/app/api');
-const { application } = require('./src/app/workspace');
+const { loadMainPage, loadFilePage } = require('./app/page');
+const bus = require('./app/bus');
+const { registerAPI } = require('./app/api');
+const { application } = require('./app/workspace');
 
 try {
     require('electron-reloader')(module)
@@ -21,7 +21,6 @@ app.whenReady().then(() => {
     } else {
         loadFilePage(win, args[0]);
     }
-    win.webContents.openDevTools();
 });
 
 app.on('window-all-closed', () => {

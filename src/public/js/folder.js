@@ -3,7 +3,7 @@ import '../css/toc.css';
 import '../css/article.css';
 import '../css/file-tree.css';
 
-import './lib/tool';
+import './common/tool';
 
 import { Dree } from "../plugin/dree/dree";
 import Split from 'split-grid'

@@ -1,3 +1,5 @@
+
+
 const tpl = `
 <div class="tool-bar">
     <div class="tool-bar-item tool-open-index">

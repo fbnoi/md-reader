@@ -1,5 +1,7 @@
 import '../css/panel.css';
 
+import './common/tool';
+
 document.addEventListener('DOMContentLoaded', function () {
     window.API.getHistory()
     .then((history) => {
