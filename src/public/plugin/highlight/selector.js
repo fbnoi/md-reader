@@ -1,14 +1,13 @@
 import { util } from "./util";
 import { Stage } from "./stage";
 import { Selection } from "./selection";
-import { Popper } from "../popper/popper";
 
 export class TextSelector {
     constructor(elem) {
         this.container = elem;
         this.stages = [];
         this.selections = [];
-        this.eventHandler = { select: [], clickSelects: [] };
+        this.eventHandler = { select: [], selectionClick: [] };
         for (let index = 0; index < elem.children.length; index++) {
             const child = elem.children[index];
             this.stages.push(Stage.factory(child));
@@ -16,6 +15,7 @@ export class TextSelector {
         this.observeResize();
         this.observeCursor();
         this.observeSelection();
+        this.observeSelectionClick();
     }
 
     highlightSelection(selection) {
@@ -25,6 +25,13 @@ export class TextSelector {
         }, this);
     }
 
+    delightSelection(selection) {
+        selection.getRects().forEach((rect) => {
+            this.delightRect(rect);
+        });
+        this.selections.splice(this.selections.indexOf(selection), 1);
+    }
+
     highlightRect(rect) {
         this.stages
             .filter(stage => {
@@ -32,6 +39,16 @@ export class TextSelector {
             })
             .forEach(stage => {
                 stage.addBox(rect);
+            });
+    }
+
+    delightRect(rect) {
+        this.stages
+            .filter(stage => {
+                return stage.elem.id === rect.containerId || stage.elem.querySelector(`[id="${rect.containerId}"]`) !== null;
+            })
+            .forEach(stage => {
+                stage.removeBox(rect);
             });
     }
 
@@ -67,27 +84,20 @@ export class TextSelector {
     }
 
     observeSelection() {
-        const popper = new Popper();
-        popper.setButtons([
-            {
-                title: 'button',
-                onClick: (event) => {
-                    console.log(event);
-                    popper.hide();
-                }
-            }
-        ]);
-        this.container.addEventListener('mouseup', util.debounce(() => {
-            const selection = this.getSelection();
-            if (selection) {
-                this.fire('select', selection);
-                let rects = selection.getRects();
-                let rect = rects[rects.length - 1];
-                console.log(rect);
-                popper.show();
-                popper.setPosition({clientX: rect.x + rect.width, clientY: rect.y});
-            }
+        this.container.addEventListener('mouseup', util.debounce((event) => {
+            let selection = this.getSelection();
+            selection && this.fire('select', selection);
         }), 10);
+    }
+
+    observeSelectionClick() {
+        this.container.addEventListener('click', util.debounce(event => {
+            event.stopPropagation();
+            let selections = this.selections.filter(selection => {
+                return selection.containPoint(event.clientX, event.clientY);
+            });
+            selections.length > 0 && this.fire('selectionClick', selections[selections.length - 1]);
+        }, 5));
     }
 
     fire(type, ...args) {

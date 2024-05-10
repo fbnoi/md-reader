@@ -2,6 +2,7 @@
     max-height: 100%;
     overflow-y: auto;
     padding: 20px;
+    position: relative;
 }
 
 .article * {

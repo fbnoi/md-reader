@@ -6,15 +6,16 @@ import '../css/file-tree.css';
 import './common/tool';
 
 import { Dree } from "../plugin/dree/dree";
-import Split from 'split-grid'
+import Split from 'split-grid';
+import util from './common/util';
+import Noter from "./common/noter";
 
-document.addEventListener('DOMContentLoaded', function () {
+util.ready(() => {
     let initialed = false;
     let radio = 0;
     const sideViewElem = document.querySelector('.side-view');
     const categoryElem = document.querySelector('.side-view .category');
     const articleElem = document.querySelector('.main-view .article');
-
     function splitResize() {
         sideViewElem.style['grid-template-rows'] = '1fr 5px ' + sideViewElem.clientHeight * radio + 'px';
     }
@@ -41,9 +42,29 @@ document.addEventListener('DOMContentLoaded', function () {
                         window.API.openExternal(link.href);
                     });
                 });
-            });
+            })
+            .then(() => new Noter(document.querySelector('.article')));
     }
-    new Promise((resolve) => {
+
+    const dirPath = new URLSearchParams(window.location.search).get('dirPath');
+    window.API.readDir(dirPath)
+    .then((nodes) => {
+        new Dree(nodes, {
+            element: document.querySelector('.file-tree'),
+            onSelect: (node) => {
+                if (node.type != 1) {
+                    readFile(node.path);
+                    window.API.setOpenedFileCache(node.path);
+                }
+                window.API.setSelectedPathCache(node.path);
+            },
+            onExpand: (node) => window.API.addOpenDirCache(node.path),
+            onFold: (node) => window.API.removeOpenDirCache(node.path),
+        });
+    })
+    .then(() => window.API.getOpenedFileCache())
+    .then((filepath) => filepath && readFile(filepath))
+    .then(() => {
         Split({
             columnGutters: [{
                 track: 1,
@@ -59,28 +80,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
         });
-        resolve();
-    }).then(() => {
-        return new URLSearchParams(window.location.search).get('dirPath');
-    }).then((dirPath) => {
-        return window.API.readDir(dirPath);
-    }).then((nodes) => {
-        new Dree(nodes, {
-            element: document.querySelector('.file-tree'),
-            onSelect: (node) => {
-                if (node.type != 1) {
-                    readFile(node.path);
-                    window.API.setOpenedFileCache(node.path);
-                }
-                window.API.setSelectedPathCache(node.path);
-            },
-            onExpand: (node) => window.API.addOpenDirCache(node.path),
-            onFold: (node) => window.API.removeOpenDirCache(node.path),
-        });
-        return;
-    }).then(() => {
-        window.API.getOpenedFileCache()
-            .then((filepath) => filepath && readFile(filepath));
     });
 
     window.addEventListener('resize', splitResize);

@@ -22,32 +22,26 @@ export class Stage {
         this.boxes = {};
     }
 
-    dispatchEvent(callable) {
-        this.elem.addEventListener('click', function(event) {
-            event.preventDefault();
-            callable(event);
-        });
-    }
-
-    rectsEvent(rects) {
-        for (const id in this.rects) {
-            const rect = this.rects[id];
-            if (rects.indexOf(rect) !== -1) {
-                const box = this.boxes[id];
-                box.fire('click', {});
-            }
-        }
-    }
-
     addBox(rect) {
         const {x, y}  = this.cc.getBoundingClientRect();
         let box = Box.factory(rect.x - x, rect.y - y, rect.width, rect.height);
-        box.on('click', (evt) => {
-            console.log(evt);
-        });
         this.layer.add(box);
-        this.boxes[box.id] = box;
-        this.rects[box.id] = rect;
+        this.boxes[box._id] = box;
+        this.rects[box._id] = rect;
+    }
+
+    removeBox(rect) {
+        let ids = [];
+        for (const id in this.rects) {
+            if (this.rects.hasOwnProperty.call(this.rects, id) && rect === this.rects[id]) {
+                ids.push(id);
+                this.boxes[id].destroy();
+            }
+        }
+        ids.forEach(id => {
+            delete this.rects[id];
+            delete this.boxes[id];
+        });
     }
 
     clear() {

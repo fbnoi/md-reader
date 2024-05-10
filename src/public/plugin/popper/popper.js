@@ -13,23 +13,35 @@ export class Popper {
         this.div = document.createElement('div');
         this.div.classList.add('tooltip-container');
         this.div.innerHTML = TPL;
-        document.body.appendChild(this.div);
-        if (options) {
-            options.position && this.setPosition(options.position);
-            options.buttons && this.setButtons(options.buttons);
-            options.position && this.setPosition(options.position);
-            options.position && this.setPosition(options.position);
-        }
+        this.container = options && options.container ? options.container : document.body;
+        this.container.appendChild(this.div);
+
+        options && options.position && this.setPosition(options.position);
+        options && options.buttons && this.setButtons(options.buttons);
+        
         this.hide();
+        this._observe();
+    }
+
+    _observe() {
+        this.container.addEventListener('click', (evt) => {
+            if (!this.div.contains(evt.target)) {
+                this.hide();
+            };
+        });
+        new ResizeObserver((evt) => this.hide.apply(this, evt)).observe(this.container);
     }
 
     setPosition(position) {
-        this.clientX = position.clientX;
-        this.clientY = position.clientY;
-        this.div.style.top = (this.clientY + (this.clientY > 30 ? -1 : 0) * this.div.clientHeight + (this.clientY > 30 ? -1 : 1) * 6) + 'px';
-        this.div.style.left = (this.clientX - this.div.clientWidth / 2) + 'px';
+        this.left = position.left;
+        this.top = position.top;
+    }
+
+    updateViewPosition() {
+        this.div.style.top = (this.top + (this.top > 30 ? -1 : 0) * this.div.clientHeight + (this.top > 30 ? -1 : 1) * 10) + 'px';
+        this.div.style.left = (this.left - this.div.clientWidth / 2) + 'px';
         const tooltip = this.div.querySelector('.tooltip');
-        this.clientY > 30 ? tooltip.classList.remove('tooltip-bottom') : tooltip.classList.add('tooltip-bottom');
+        this.top > 30 ? tooltip.classList.remove('tooltip-bottom') : tooltip.classList.add('tooltip-bottom');
     }
 
     setButtons(buttons) {
@@ -42,6 +54,7 @@ export class Popper {
 
     show() {
         this.div.style.display = 'inline-block';
+        this.updateViewPosition();
     }
 
     hide() {
@@ -49,7 +62,7 @@ export class Popper {
     }
 
     btnFactory(button) {
-        const btn = document.createElement('a');
+        let btn = document.createElement('a');
         btn.innerText = button.title;
         btn.addEventListener('click', evt => button.onClick && button.onClick(evt));
 

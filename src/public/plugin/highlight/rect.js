@@ -11,14 +11,14 @@ export class Rect {
 
     static factory(containerId, range) {
         const {x, y, width, height} = range.getBoundingClientRect();
-        return new Rect(containerId, x, y, width, height);
+        return new Rect(containerId, x, y - 5, width, height + 8);
     }
 
     static splitRange(node, startOffset, endOffset) {
         const range = document.createRange();
         range.setStart(node, startOffset);
         const rowTop = util.getCharTop(node, startOffset);
-        const id = util.getOutContainer(node, '.noter').id;
+        const id = util.getOutContainer(node, 'noter').id;
         if ((endOffset - startOffset < 2) || rowTop === util.getCharTop(node, endOffset - 1)) {
             range.setEnd(node, endOffset);
             let rect = Rect.factory(id, range);

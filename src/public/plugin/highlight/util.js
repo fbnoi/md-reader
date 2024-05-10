@@ -14,10 +14,10 @@ export class util {
     static getOutContainer(elem, selector) {
         var parent = elem.parentElement;
         while (parent && parent !== document) {
-            if (parent.querySelector(selector)) {
+            if (parent.classList.contains(selector)) {
                 return parent;
             }
-            parent = parent.parentNode;
+            parent = parent.parentElement;
         }
         return null;
     }
