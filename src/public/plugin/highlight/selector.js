@@ -78,7 +78,7 @@ export class TextSelector {
     observeCursor() {
         this.container.addEventListener('mousemove', util.debounce(event => {
             this.container.style.cursor = this.selections.filter(selection => {
-                return selection.containPoint(event.clientX, event.clientY);
+                return selection.containPoint(event.clientX, event.clientY + this.container.scrollTop);
             }).length > 0 ? 'pointer' : 'unset';
         }, 5));
     }
@@ -94,7 +94,7 @@ export class TextSelector {
         this.container.addEventListener('click', util.debounce(event => {
             event.stopPropagation();
             let selections = this.selections.filter(selection => {
-                return selection.containPoint(event.clientX, event.clientY);
+                return selection.containPoint(event.clientX, event.clientY + this.container.scrollTop);
             });
             selections.length > 0 && this.fire('selectionClick', selections[selections.length - 1]);
         }, 5));

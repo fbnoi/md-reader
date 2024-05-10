@@ -11,7 +11,7 @@ export class Rect {
 
     static factory(containerId, range) {
         const {x, y, width, height} = range.getBoundingClientRect();
-        return new Rect(containerId, x, y - 5, width, height + 8);
+        return new Rect(containerId, x, y, width, height);
     }
 
     static splitRange(node, startOffset, endOffset) {
