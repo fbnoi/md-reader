@@ -16,7 +16,7 @@ const storage = {
             _location: filepath,
             _store: {root: {}},
             add(name, value) {
-                if (typeof this._store.root[name] === 'undefined') {
+                if (!this._store.root.hasOwnProperty(name)) {
                     this._store.root[name] = [];
                 }
                 if (!Array.isArray(this._store.root[name])) {
@@ -26,7 +26,7 @@ const storage = {
                 this._persist();
             },
             addInTop(name, value) {
-                if (typeof this._store.root[name] === 'undefined') {
+                if (typeof this._store.root[name] === undefined) {
                     this._store.root[name] = [];
                 }
                 if (!Array.isArray(this._store.root[name])) {
@@ -49,7 +49,7 @@ const storage = {
             },
             get(name, value = null) {
                 let ret = this._store.root[name];
-                if (typeof ret != 'undefined') {
+                if (typeof ret !== undefined) {
                     return ret;
                 }
                 return value;
@@ -72,12 +72,16 @@ const storage = {
             if (XMLValidator.validate(xmlContent) === true) {
                 subCache._store = this._xmlParser.parse(fs.readFileSync(filepath));
             }
+            if (typeof subCache._store.root !== 'object') {
+                console.log(typeof subCache._store.root);
+                subCache._store.root = {};
+            }
         }
         return subCache;
     },
     get(namespace, value = null) {
         let ret = this._store[namespace];
-        if (typeof ret !== 'undefined') {
+        if (typeof ret !== undefined) {
             return ret;
         }
         return value;
