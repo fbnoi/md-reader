@@ -34,22 +34,12 @@ export class TextSelector {
 
     highlightRect(rect) {
         this.stages
-            .filter(stage => {
-                return stage.elem.id === rect.containerId || stage.elem.querySelector(`[id="${rect.containerId}"]`) !== null;
-            })
-            .forEach(stage => {
-                stage.addBox(rect);
-            });
+            .filter(stage => stage.elem === rect.container)
+            .forEach(stage => stage.addBox(rect));
     }
 
     delightRect(rect) {
-        this.stages
-            .filter(stage => {
-                return stage.elem.id === rect.containerId || stage.elem.querySelector(`[id="${rect.containerId}"]`) !== null;
-            })
-            .forEach(stage => {
-                stage.removeBox(rect);
-            });
+        rect.getBox().destroy();
     }
 
     getSelection() {
@@ -78,7 +68,7 @@ export class TextSelector {
     observeCursor() {
         this.container.addEventListener('mousemove', util.debounce(event => {
             this.container.style.cursor = this.selections.filter(selection => {
-                return selection.containPoint(event.clientX, event.clientY + this.container.scrollTop);
+                return selection.containPoint(event.clientX, event.clientY);
             }).length > 0 ? 'pointer' : 'unset';
         }, 5));
     }
@@ -94,7 +84,7 @@ export class TextSelector {
         this.container.addEventListener('click', util.debounce(event => {
             event.stopPropagation();
             let selections = this.selections.filter(selection => {
-                return selection.containPoint(event.clientX, event.clientY + this.container.scrollTop);
+                return selection.containPoint(event.clientX, event.clientY);
             });
             selections.length > 0 && this.fire('selectionClick', selections[selections.length - 1]);
         }, 5));

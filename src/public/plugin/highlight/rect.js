@@ -1,40 +1,75 @@
 import { util } from "./util";
 
 export class Rect {
-    constructor(containerId, x, y, width, height) {
-        this.containerId = containerId;
+    constructor(container, x, y, width, height, selection) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
+        this.container = container;
+        this.selection = selection;
     }
 
-    static factory(containerId, range) {
-        const {x, y, width, height} = range.getBoundingClientRect();
-        return new Rect(containerId, x, y, width, height);
+    containPoint(clientX, clientY) {
+        let containerRect = this.container.getBoundingClientRect();
+        let currentClientX = this.x + containerRect.x;
+        let currentClientY = this.y + containerRect.y;
+
+        return currentClientX <= clientX && currentClientX + this.width >= clientX &&
+            currentClientY <= clientY && currentClientY + this.height >= clientY;
     }
 
-    static splitRange(node, startOffset, endOffset) {
-        const range = document.createRange();
+    getBox() {
+        return this.box;
+    }
+
+    setBox(box) {
+        this.box = box;
+    }
+
+    getStage() {
+        return this.stage;
+    }
+
+    setStage(stage) {
+        this.stage = stage;
+    }
+
+    getSelection() {
+        return this.selection;
+    }
+
+    setSelection(selection) {
+        this.selection = selection;
+    }
+
+    static factory(selection, container, range) {
+        let rangeRect = range.getBoundingClientRect();
+        let containerRect = container.getBoundingClientRect();
+
+        return new Rect(
+            container,
+            rangeRect.x - containerRect.x,
+            rangeRect.y - containerRect.y,
+            rangeRect.width,
+            rangeRect.height,
+            selection,
+        );
+    }
+
+    static splitRange(selection, node, startOffset, endOffset) {
+        let range = document.createRange();
         range.setStart(node, startOffset);
-        const rowTop = util.getCharTop(node, startOffset);
-        const id = util.getOutContainer(node, 'noter').id;
+        let rowTop = util.getCharTop(node, startOffset);
+        let container = util.getOutContainer(node, 'noter');
         if ((endOffset - startOffset < 2) || rowTop === util.getCharTop(node, endOffset - 1)) {
             range.setEnd(node, endOffset);
-            let rect = Rect.factory(id, range);
-            if (rect.width != 0) {
-                return [Rect.factory(id, range)];
-            }
-            return [];
+            return [Rect.factory(selection, container, range)];
         } else {
-            const last = util.findRowLastChar(rowTop, node, startOffset, endOffset - 1);
+            let last = util.findRowLastChar(rowTop, node, startOffset, endOffset - 1);
             range.setEnd(node, last + 1);
-            const others = Rect.splitRange(node, last + 1, endOffset);
-            let rect = Rect.factory(id, range);
-            if (rect.width != 0) {
-                return [Rect.factory(id, range), ...others];
-            }
-            return [...others];
+            let others = Rect.splitRange(selection, node, last + 1, endOffset);
+            return [Rect.factory(selection, container, range), ...others];
         }
     }
 }

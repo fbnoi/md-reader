@@ -9,8 +9,8 @@ export class Stage {
         this.cc.style.inset = '0';
         this.cc.style.overflow = 'hidden';
         this.cc.style.zIndex = -1;
-        this.elem.prepend(this.cc);
         this.elem.classList.add('noter');
+        this.elem.prepend(this.cc);
         const { width, height } = this.getContainerSize();
         this.rel = new Konva.Stage({
             container: this.cc,
@@ -18,36 +18,16 @@ export class Stage {
         });
         this.layer = new Konva.Layer();
         this.rel.add(this.layer);
-        this.rects = {};
-        this.boxes = {};
     }
 
     addBox(rect) {
-        const {x, y}  = this.cc.getBoundingClientRect();
-        let box = Box.factory(rect.x - x, rect.y - y, rect.width, rect.height);
+        let box = Box.factory(rect.x, rect.y, rect.width, rect.height);
+        rect.setBox(box);
         this.layer.add(box);
-        this.boxes[box._id] = box;
-        this.rects[box._id] = rect;
-    }
-
-    removeBox(rect) {
-        let ids = [];
-        for (const id in this.rects) {
-            if (this.rects.hasOwnProperty.call(this.rects, id) && rect === this.rects[id]) {
-                ids.push(id);
-                this.boxes[id].destroy();
-            }
-        }
-        ids.forEach(id => {
-            delete this.rects[id];
-            delete this.boxes[id];
-        });
     }
 
     clear() {
         this.layer.destroyChildren();
-        this.boxes = {};
-        this.rects = {};
     }
 
     getContainerSize() {

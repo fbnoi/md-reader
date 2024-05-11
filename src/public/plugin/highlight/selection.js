@@ -39,7 +39,7 @@ export class Selection {
         nodes.forEach(node => {
             let start = node === this.startContainer ? this.startOffset : 0;
             let end = node === this.endContainer ? this.endOffset : node.textContent.length;
-            rects.push(...Rect.splitRange(node, start, end));
+            rects.push(...Rect.splitRange(this, node, start, end));
         });
         return rects;
     }
@@ -50,8 +50,7 @@ export class Selection {
 
     containPoint(x, y) {
         return this.rects.filter(rect => {
-            return rect.x <= x && rect.x + rect.width >= x &&
-                rect.y <= y && rect.y + rect.height >= y;
+            return rect.containPoint(x, y);
         }).length > 0;
     }
 }

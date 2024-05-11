@@ -6,7 +6,7 @@ export class Box {
             x, y, width, height,
             fill: '#00D2FF',
             draggable: false,
-            opacity: 0.3
+            opacity: 0.6,
         });
     }
 }

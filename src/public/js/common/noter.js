@@ -18,10 +18,7 @@ export default class Noter {
         let rects = selection.getRects();
         let rect = rects[rects.length - 1];
         if (rect.width > 10) {
-            this.popper.setPosition({
-                top: rect.y + this.container.scrollTop,
-                left: rect.x - this.container.getBoundingClientRect().x + rect.width,
-            });
+            this.popper.setPosition(this._getPosition(rect));
             this.popper.setButtons([{
                 title: 'highlight',
                 onClick: () => {
@@ -37,10 +34,7 @@ export default class Noter {
         let rects = selection.getRects();
         let rect = rects[rects.length - 1];
         if (rect.width > 10) {
-            this.popper.setPosition({
-                top: rect.y + this.container.scrollTop,
-                left: rect.x - this.container.getBoundingClientRect().x + rect.width,
-            });
+            this.popper.setPosition(this._getPosition(rect));
             this.popper.setButtons([{
                 title: 'remove highlight',
                 onClick: () => {
@@ -50,6 +44,10 @@ export default class Noter {
             }]);
             this.popper.show();
         }
+    }
+
+    _getPosition(rect) {
+        return {top: rect.container.offsetTop + rect.y, left: rect.container.offsetLeft + rect.width + rect.x}
     }
 
     syncNote() {
