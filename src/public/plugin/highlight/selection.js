@@ -23,8 +23,8 @@ export class Selection {
         const obj = JSON.parse(str);
         const startElem = document.getElementById(obj.startElemId);
         const endElem = document.getElementById(obj.endElemId);
-        const startContainer = getFirstTextNode(startElem);
-        const endContainer = getFirstTextNode(endElem);
+        const startContainer = util.getFirstTextNode(startElem);
+        const endContainer = util.getFirstTextNode(endElem);
 
         return new Selection(startContainer, obj.startOffset, endContainer, obj.endOffset);
     }

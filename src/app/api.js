@@ -29,7 +29,7 @@ const api = {
                 }
             });
         }
-        let snapshot = project.getProjectSnapshot();
+        let snapshot = project.getSnapshot();
         walk(tree, node => {
             if (snapshot.expandedDir && snapshot.expandedDir.indexOf(node.path) !== -1) {
                 node.expanded = true;
@@ -88,11 +88,23 @@ const api = {
     },
 
     getOpenedFileCache() {
-        return project.getProjectSnapshot().openedFile;
+        return project.getSnapshot().openedFile;
     },
 
     setSelectedPathCache(path) {
         project.setSelectedPath(path);
+    },
+
+    getNotes() {
+        return project.getNotes();
+    },
+
+    addNote(selection, note) {
+        return project.addNote(selection, note);
+    },
+
+    removeNote(selection) {
+        return project.removeNote(selection);
     }
 }
 
@@ -112,6 +124,9 @@ const registerAPI = () => {
     ipcMain.handle('api:setOpenedFileCache', (_, filepath) => api.setOpenedFileCache(filepath));
     ipcMain.handle('api:getOpenedFileCache', () => api.getOpenedFileCache());
     ipcMain.handle('api:setSelectedPathCache', (_, path) => api.setSelectedPathCache(path));
+    ipcMain.handle('api:getNotes', () => api.getNotes());
+    ipcMain.handle('api:addNote', (_, selection, note) => api.addNote(selection, note));
+    ipcMain.handle('api:removeNote', (_, selection) => api.removeNote(selection));
 }
 
 module.exports = { registerAPI };

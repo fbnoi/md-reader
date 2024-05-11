@@ -18,11 +18,13 @@ const application_history_storage = storage.new('app:history', _APP_HISTORY_PATH
 const project = {
     workingDir: null,
     snapshotStorage: null,
+    noteStorage: null,
     projectId: null,
     setWorkingDir(dir) {
         this.workingDir = dir;
         this.projectId = id(dir);
-        this.snapshotStorage = storage.new('project:' + this.projectId, this.getProjectSnapshotPath());
+        this.snapshotStorage = storage.new('project:' + this.projectId, this.getSnapshotPath());
+        this.noteStorage = storage.new('project:' + this.projectId, this.getProjectNotePath());
     },
     getWorkingDir() {
         return this.workingDir;
@@ -33,12 +35,19 @@ const project = {
     getWorkingCacheDir() {
         return path.join(_APP_PROJECTS_DIR_PATH_, this.projectId, 'cache');
     },
-    getProjectSnapshotPath() {
+    getSnapshotPath() {
         return path.join(_APP_PROJECTS_DIR_PATH_, this.projectId, 'snapshot.xml');
     },
+    getProjectNotePath() {
+        return path.join(_APP_PROJECTS_DIR_PATH_, this.projectId, 'note.xml');
+    },
 
-    getProjectSnapshot() {
+    getSnapshot() {
         return this.snapshotStorage.all();
+    },
+
+    getNotes() {
+        return this.noteStorage.get('note', []);
     },
 
     addExpandedDir(dirPath) {
@@ -62,6 +71,25 @@ const project = {
 
     setSelectedPath(path) {
         this.snapshotStorage.set('selectedPath', path);
+    },
+
+    addNote(selection, note = null) {
+        this.noteStorage.add('note', { selection: selection, mark: note });
+    },
+
+    removeNote(selection) {
+        let notes = this.noteStorage.get('note', []);
+        let i = -1;
+        for (let index = 0; index < notes.length; index++) {
+            const note = notes[index];
+            if (note.selection === selection) {
+                i = index;
+                break;
+            }
+        }
+        if (i !== -1) {
+            this.noteStorage.remove('note', i);
+        }
     }
 }
 

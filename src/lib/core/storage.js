@@ -7,7 +7,7 @@ const storage = {
     _xmlBuilder: new XMLBuilder({ format: true }),
     _xmlParser: new XMLParser({
         isArray: (tagName, jPath, isLeafNode, isAttribute) => {
-            return ['file', 'dir', 'expandedDir'].indexOf(tagName) !== -1;
+            return ['file', 'dir', 'expandedDir', 'note'].indexOf(tagName) !== -1;
         }
     }),
 

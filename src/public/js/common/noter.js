@@ -6,7 +6,17 @@ export default class Noter {
         this.container = container;
         this.selector = new TextSelector(container);
         this. popper = new Popper({container: container});
+        this.init();
         this.listen();
+    }
+
+    init() {
+        window.API.getNotes()
+        .then(notes => {
+            notes.forEach(note => {
+                this.selector.highlightSelection(this.selector.unserialize(note.selection));
+            });
+        });
     }
 
     listen() {
@@ -24,6 +34,7 @@ export default class Noter {
                 onClick: () => {
                     this.selector.highlightSelection(selection);
                     this.popper.hide();
+                    window.API.addNote(this.selector.serialize(selection), null);
                 }
             }]);
             this.popper.show();
@@ -40,6 +51,7 @@ export default class Noter {
                 onClick: () => {
                     this.selector.delightSelection(selection);
                     this.popper.hide();
+                    window.API.removeNote(this.selector.serialize(selection));
                 }
             }]);
             this.popper.show();
@@ -48,9 +60,5 @@ export default class Noter {
 
     _getPosition(rect) {
         return {top: rect.container.offsetTop + rect.y, left: rect.container.offsetLeft + rect.width + rect.x}
-    }
-
-    syncNote() {
-        
     }
 }

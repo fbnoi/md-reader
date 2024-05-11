@@ -16,4 +16,7 @@ contextBridge.exposeInMainWorld('API', {
     setOpenedFileCache: (filepath) => ipcRenderer.invoke('api:setOpenedFileCache', filepath),
     getOpenedFileCache: () => ipcRenderer.invoke('api:getOpenedFileCache'),
     setSelectedPathCache: (path) => ipcRenderer.invoke('api:setSelectedPathCache', path),
+    getNotes: () => ipcRenderer.invoke('api:getNotes'),
+    addNote: (selection, note) => ipcRenderer.invoke('api:addNote', selection, note),
+    removeNote: selection => ipcRenderer.invoke('api:removeNote', selection),
 });
