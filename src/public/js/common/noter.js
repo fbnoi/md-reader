@@ -1,5 +1,8 @@
 import { TextSelector } from '../../plugin/highlight/selector';
 import { Popper } from '../../plugin/popper/popper';
+import contextMenu from './menu';
+
+import './menu';
 
 export default class Noter {
     constructor(container) {
@@ -17,6 +20,14 @@ export default class Noter {
                 this.selector.highlightSelection(this.selector.unserialize(note.selection));
             });
         });
+        contextMenu.inject([
+            {
+                label: 'highlight',
+                click: () => {
+                    console.log();
+                },
+            }
+        ]);
     }
 
     listen() {
