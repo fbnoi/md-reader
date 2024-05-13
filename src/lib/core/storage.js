@@ -73,7 +73,6 @@ const storage = {
                 subCache._store = this._xmlParser.parse(fs.readFileSync(filepath));
             }
             if (typeof subCache._store.root !== 'object') {
-                console.log(typeof subCache._store.root);
                 subCache._store.root = {};
             }
         }

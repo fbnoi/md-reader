@@ -96,7 +96,6 @@ const project = {
 const application = {
     _win: null,
     createMainWindow() {
-        console.log(path.resolve(__dirname, '../../dist/preload.js'));
         this._win = new BrowserWindow({
             width: DEFAULT_WIN_WIDTH,
             height: DEFAULT_WIN_HEIGHT,
