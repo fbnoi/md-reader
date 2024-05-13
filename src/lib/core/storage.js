@@ -48,9 +48,8 @@ const storage = {
                 this._persist();
             },
             get(name, value = null) {
-                let ret = this._store.root[name];
-                if (typeof ret !== undefined) {
-                    return ret;
+                if (this._store.root && this._store.root.hasOwnProperty(name)) {
+                    return this._store.root[name];
                 }
                 return value;
             },
