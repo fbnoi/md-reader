@@ -100,7 +100,7 @@ const application = {
             width: DEFAULT_WIN_WIDTH,
             height: DEFAULT_WIN_HEIGHT,
             webPreferences: {
-                preload: path.join(__dirname, 'preload.js'),
+                preload: path.join(__dirname, '../../dist/js/preload.bundle.js'),
                 contextIsolation: true,
                 nodeIntegration: false,
                 enableRemoteModule: false,

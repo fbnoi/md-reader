@@ -25,7 +25,7 @@ const localImage = {
             },
         }
     },
-    setBasepath: (basepath) => {
+    setBasePath: (basepath) => {
         localImage.basepath = basepath;
     }
 };

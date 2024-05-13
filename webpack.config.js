@@ -9,7 +9,8 @@ module.exports = {
         app: "./src/public/js/app.js",
         home: "./src/public/js/home.js",
         file: "./src/public/js/file.js",
-        folder: "./src/public/js/folder.js"
+        folder: "./src/public/js/folder.js",
+        preload: "./src/app/preload.js"
     },
     devtool: false,
     output: {
@@ -83,4 +84,10 @@ module.exports = {
             }
         }
     },
+    resolve: {
+        fallback: {
+            fs: false,
+            path: false,
+        }
+    }
 };
