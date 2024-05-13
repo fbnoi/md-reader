@@ -7,6 +7,12 @@ const menuAPIs = require('./menu');
 
 module.exports = function registerAPI() {
     [...ioAPIs, ...appAPIs, ...projAPIs, ...menuAPIs].forEach(api => {
-        ipcMain.handle(api.label, (_, ...params) => api.fn.call(null, ...params));
+        switch (api.type) {
+            case 'on':
+                ipcMain.on(api.label, (_event, ...args) => api.fn.call(null, ...args))
+                break;
+            default:
+                ipcMain.handle(api.label, (_, ...args) => api.fn.call(null, ...args));
+        }
     });
 };

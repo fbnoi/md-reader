@@ -8,7 +8,18 @@ const menuAPIs = require('./menu.signature');
 module.exports = function signature() {
     const apis = {};
     [...ioAPIs, ...appAPIs, ...projAPIs, ...menuAPIs].forEach(api => {
-        apis[api.id] = (...params) => ipcRenderer.invoke(api.label, ...params);
+        switch (api.type) {
+            case 'on':
+                apis[api.id] = (callback) => ipcRenderer.on(api.label, (_, ...args) => callback(...args));
+                break;
+            case 'fn':
+                apis[api.id] = (...params) => api.fn(...params);
+                break;
+            default:
+                apis[api.id] = (...args) => ipcRenderer.invoke(api.label, ...args);
+        }
     });
+
+
     return apis;
 };

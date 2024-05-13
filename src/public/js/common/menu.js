@@ -1,16 +1,21 @@
 import util from "./util";
 
 util.ready(() => {
-    document.addEventListener('contextmenu', (event) => {
+    window.addEventListener('contextmenu', (event) => {
+        console.log(123);
         event.preventDefault();
         contextMenu.popup(event);
+    });
+
+    window.API.onContextMenuCommand((message) => {
+        console.log(message);
     });
 });
 
 class ContextMenu {
-    inject(items) {this.items = items;}
+    inject(items) { this.items = items; }
     popup(event) {
-        window.API.menu(event, ['copy', 'paste', 'separator', ...this.items])
+        window.API.showContextMenu(event, ['copy', 'paste', 'separator', ...this.items])
     }
 }
 
