@@ -37,15 +37,15 @@ module.exports = [
     {
         id: 'openDirPage',
         label: 'api:application:openDirPage',
-        fn() {
-            openDirPage();
+        fn(dirPath) {
+            openDirPage(dirPath);
         }
     },
     {
         id: 'openFilePage',
         label: 'api:application:openFilePage',
-        fn() {
-            openFilePage();
+        fn(filepath) {
+            openFilePage(filepath);
         }
     },
     {

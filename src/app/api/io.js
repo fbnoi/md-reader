@@ -1,4 +1,9 @@
+const path = require('path');
+const fs = require('fs');
+
 const { project } = require('../../app/workspace');
+const { dree, dreeType } = require('../../lib/core/dree');
+const markdown = require('../../lib/core/markdown');
 const localImage = require('../../lib/marked/local-image');
 
 module.exports = [
