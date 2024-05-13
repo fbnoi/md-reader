@@ -96,11 +96,12 @@ const project = {
 const application = {
     _win: null,
     createMainWindow() {
+        console.log(path.resolve(__dirname, '../../dist/preload.js'));
         this._win = new BrowserWindow({
             width: DEFAULT_WIN_WIDTH,
             height: DEFAULT_WIN_HEIGHT,
             webPreferences: {
-                preload: path.join(__dirname, '../../dist/js/preload.bundle.js'),
+                preload: path.resolve(__dirname, '../../dist/preload.js'),
                 contextIsolation: true,
                 nodeIntegration: false,
                 enableRemoteModule: false,

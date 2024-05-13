@@ -18,7 +18,8 @@
         "start": "electron .",
         "watch": "webpack --watch --config webpack.config.js",
         "build": "webpack --config webpack.config.js",
-        "package": "yarn build && electron-forge package",
+        "build:prod": "NODE_ENV=production webpack --config webpack.config.prod.js",
+        "package": "yarn build:prod && electron-forge package",
         "make": "yarn build && electron-forge make",
         "publish": "electron-forge publish"
     },
