@@ -1,7 +1,7 @@
 const { app, BrowserWindow } = require('electron');
 const { loadMainPage, loadFilePage } = require('./app/page');
 const bus = require('./app/bus');
-const registerAPI = require('./app/api');
+const registerAPI = require('./app/api/api');
 const { application } = require('./app/workspace');
 
 try {

@@ -1,8 +1,8 @@
 const { ipcMain } = require('electron');
 
-const ioAPIs = require('./api/io');
-const appAPIs = require('./api/application');
-const projAPIs = require('./api/project');
+const ioAPIs = require('./io');
+const appAPIs = require('./application');
+const projAPIs = require('./project');
 
 module.exports = function registerAPI() {
     [...ioAPIs, ...appAPIs, ...projAPIs].forEach(api => {
