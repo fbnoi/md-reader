@@ -13,7 +13,7 @@ module.exports = function signature() {
                 apis[api.id] = (callback) => ipcRenderer.on(api.label, (_, ...args) => callback(...args));
                 break;
             case 'fn':
-                apis[api.id] = (...params) => api.fn(...params);
+                apis[api.id] = (...params) => api.fn.call(null, ...params);
                 break;
             default:
                 apis[api.id] = (...args) => ipcRenderer.invoke(api.label, ...args);

@@ -9,7 +9,7 @@ module.exports = function registerAPI() {
     [...ioAPIs, ...appAPIs, ...projAPIs, ...menuAPIs].forEach(api => {
         switch (api.type) {
             case 'on':
-                ipcMain.on(api.label, (_event, ...args) => api.fn.call(null, ...args))
+                ipcMain.on(api.label, (_event, ...args) => api.fn.call(null, _event, ...args))
                 break;
             default:
                 ipcMain.handle(api.label, (_, ...args) => api.fn.call(null, ...args));

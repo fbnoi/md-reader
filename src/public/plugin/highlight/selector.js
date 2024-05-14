@@ -14,8 +14,24 @@ export class TextSelector {
         }
         this.observeResize();
         this.observeCursor();
-        this.observeSelection();
         this.observeSelectionClick();
+    }
+
+    highlight(selection) {
+        if (!selection.isCollapsed && selection.type === 'Range') {
+            const range = selection.getRangeAt(0);
+            if (!range.collapsed) {
+                let select = new Selection(
+                    range.startContainer,
+                    range.startOffset,
+                    range.endContainer,
+                    range.endOffset
+                );
+                if (select.getRects().length > 0) {
+                    this.highlightSelection(select);
+                }
+            }
+        }
     }
 
     highlightSelection(selection) {
@@ -42,24 +58,6 @@ export class TextSelector {
         rect.getBox().destroy();
     }
 
-    getSelection() {
-        const selection = document.getSelection();
-        if (!selection.isCollapsed) {
-            const range = selection.getRangeAt(0);
-            if (!range.collapsed) {
-                let select = new Selection(
-                    range.startContainer,
-                    range.startOffset,
-                    range.endContainer,
-                    range.endOffset
-                );
-                return select.getRects().length > 0 ? select : null;
-            }
-        }
-
-        return null;
-    }
-
     observeResize() {
         const observer = new ResizeObserver(util.debounce(this._handleResize.bind(this), 250))
         observer.observe(this.container)
@@ -71,13 +69,6 @@ export class TextSelector {
                 return selection.containPoint(event.clientX, event.clientY);
             }).length > 0 ? 'pointer' : 'unset';
         }, 5));
-    }
-
-    observeSelection() {
-        this.container.addEventListener('mouseup', util.debounce((event) => {
-            let selection = this.getSelection();
-            selection && this.fire('select', selection);
-        }), 10);
     }
 
     observeSelectionClick() {
