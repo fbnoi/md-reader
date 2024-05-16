@@ -1,6 +1,6 @@
 {
     "name": "md-reader",
-    "version": "1.0.0",
+    "version": "1.0.0-Bate",
     "description": "markdown viewer",
     "main": "src/main.js",
     "repository": "https://github.com/fbnoi/md-reader.git",
