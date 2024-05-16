@@ -18,6 +18,7 @@ export class util {
                 return parent;
             }
             parent = parent.parentElement;
+            
         }
         return null;
     }

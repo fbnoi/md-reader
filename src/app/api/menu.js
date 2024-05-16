@@ -1,4 +1,4 @@
-const { MenuItem, Menu } = require("electron");
+const { Menu } = require("electron");
 const { application } = require("../workspace");
 
 function menuItemFactory(label, event) {

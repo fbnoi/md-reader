@@ -981,7 +981,7 @@
 
 "@electron-forge/cli@^7.4.0":
   version "7.4.0"
-  resolved "https://mirrors.huaweicloud.com/repository/npm/@electron-forge/cli/-/cli-7.4.0.tgz#db16f4bc678d1f6cec8890cdf86041e9c8336350"
+  resolved "https://registry.npmmirror.com/@electron-forge/cli/-/cli-7.4.0.tgz#db16f4bc678d1f6cec8890cdf86041e9c8336350"
   integrity sha512-a+zZv3ja/IxkJzNyx4sOHSZv6DPV85S0PEVF6pcRjUpbDL5r+DxjRFsNc0Nq4UIWyFm1nw7RWoPdd9uDst4Tvg==
   dependencies:
     "@electron-forge/core" "7.4.0"

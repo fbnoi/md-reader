@@ -9,19 +9,28 @@ class ContextMenuBridge {
     listen() {
         window.addEventListener('contextmenu', (e) => {
             e.preventDefault();
-            let items = this.getNeededItems();
+            let context = this.generateMenuContext(e);
+            let items = this.getNeededItems(context);
             items && ipcRenderer.send('api:menu:showContextMenu', items);
         })
     }
 
-    addItem(label, condition = null) {
+    addItem(label, condition) {
         this.items.push({ label, condition });
     }
 
-    getNeededItems() {
+    getNeededItems(context) {
         return this.items
-            .filter(item => !item.condition || item.condition.call())
+            .filter(item => !item.condition || item.condition.call(null, context))
             .map(item => item.label);
+    }
+
+    generateMenuContext(e) {
+        return {
+            x: e.x,
+            y: e.y,
+            type: e.type
+        }
     }
 }
 

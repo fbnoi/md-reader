@@ -34,6 +34,25 @@ export class TextSelector {
         }
     }
 
+    generateSelection(selection) {
+        if (!selection.isCollapsed && selection.type === 'Range') {
+            const range = selection.getRangeAt(0);
+            if (!range.collapsed) {
+                let select = new Selection(
+                    range.startContainer,
+                    range.startOffset,
+                    range.endContainer,
+                    range.endOffset
+                );
+                if (select.getRects().length > 0) {
+                    return select;
+                }
+            }
+        }
+
+        return null;
+    }
+
     highlightSelection(selection) {
         this.selections.push(selection);
         selection.getRects().forEach((rect) => {
@@ -41,11 +60,19 @@ export class TextSelector {
         }, this);
     }
 
-    delightSelection(selection) {
+    removeHighlight(selection) {
         selection.getRects().forEach((rect) => {
-            this.delightRect(rect);
+            this.removeRect(rect);
         });
         this.selections.splice(this.selections.indexOf(selection), 1);
+    }
+
+    getHighlightSelection(x, y) {
+        let selections = this.selections.filter(selection => {
+            return selection.containPoint(x, y);
+        });
+
+        return selections.length > 0 ? selections[selections.length - 1] : null;
     }
 
     highlightRect(rect) {
@@ -54,7 +81,7 @@ export class TextSelector {
             .forEach(stage => stage.addBox(rect));
     }
 
-    delightRect(rect) {
+    removeRect(rect) {
         rect.getBox().destroy();
     }
 
