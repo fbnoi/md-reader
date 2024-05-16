@@ -10,30 +10,31 @@ import util from './common/util';
 import Noter from "./common/noter";
 
 util.ready(() => {
-    let filePath = new URLSearchParams(window.location.search).get('filePath');
-    window.API.readFile(filePath)
-    .then((fileInfo) => {
-        document.title = fileInfo.name;
-        document.querySelector('.article').innerHTML = fileInfo.doc.html;
-        document.querySelector('.category').innerHTML = fileInfo.doc.toc;
-    })
-    .then(() => {
-        new Noter(document.querySelector('.article'));
-    })
-    .then(() => {
-        document.querySelectorAll('a.open-in-browser').forEach((link) => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                window.API.openExternal(link.href);
+    let filepath = new URLSearchParams(window.location.search).get('filePath');
+    window.API.setOpenedFileCache(filepath)
+        .then(() => window.API.readFile(filepath))
+        .then((fileInfo) => {
+            document.title = fileInfo.name;
+            document.querySelector('.article').innerHTML = fileInfo.doc.html;
+            document.querySelector('.category').innerHTML = fileInfo.doc.toc;
+        })
+        .then(() => {
+            new Noter(document.querySelector('.article'));
+        })
+        .then(() => {
+            document.querySelectorAll('a.open-in-browser').forEach((link) => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.API.openExternal(link.href);
+                });
+            });
+        })
+        .then(() => {
+            Split({
+                columnGutters: [{
+                    track: 1,
+                    element: document.querySelector('.gutter-main'),
+                }]
             });
         });
-    })
-    .then(() => {
-        Split({
-            columnGutters: [{
-                track: 1,
-                element: document.querySelector('.gutter-main'),
-            }]
-        });
-    });
 });

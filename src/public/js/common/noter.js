@@ -5,6 +5,7 @@ class MenuItem {
     constructor(label, command, condition) {
         this.label = label;
         this.command = () => {
+            console.log(this.context);
             command(this.context);
         };
         this.condition = (e) => {
@@ -68,6 +69,6 @@ export default class Noter {
             });
             window.getSelection().empty();
         });
-        this.items.forEach(item => window.API.addConTextMenuItem(item));
+        window.API.setContextMenuItems(this.items);
     }
 }

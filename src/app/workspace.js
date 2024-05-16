@@ -18,13 +18,13 @@ const application_history_storage = storage.new('app:history', _APP_HISTORY_PATH
 const project = {
     workingDir: null,
     snapshotStorage: null,
+    noteStorages: {},
     noteStorage: null,
     projectId: null,
     setWorkingDir(dir) {
         this.workingDir = dir;
         this.projectId = id(dir);
         this.snapshotStorage = storage.new('project:' + this.projectId, this.getSnapshotPath());
-        this.noteStorage = storage.new('project:' + this.projectId, this.getProjectNotePath());
     },
     getWorkingDir() {
         return this.workingDir;
@@ -40,6 +40,9 @@ const project = {
     },
     getProjectNotePath() {
         return path.join(_APP_PROJECTS_DIR_PATH_, this.projectId, 'note.xml');
+    },
+    getProjectNoteDir() {
+        return path.join(_APP_PROJECTS_DIR_PATH_, this.projectId, 'note');
     },
 
     getSnapshot() {
@@ -67,6 +70,12 @@ const project = {
 
     setOpenedFile(filepath) {
         this.snapshotStorage.set('openedFile', filepath);
+        let filename = path.basename(filepath);
+        if (!this.noteStorages.hasOwnProperty(filename)) {
+            let notepath = path.join(this.getProjectNoteDir(), filename + '.xml');
+            this.noteStorages[filename] = storage.new('project:note:' + filename, notepath);
+        }
+        this.noteStorage = this.noteStorages[filename];
     },
 
     setSelectedPath(path) {
@@ -74,7 +83,7 @@ const project = {
     },
 
     addNote(selection, note = null) {
-        this.noteStorage.add('note', { selection: selection, mark: note });
+        this.noteStorage && this.noteStorage.add('note', { selection: selection, mark: note });
     },
 
     removeNote(selection) {

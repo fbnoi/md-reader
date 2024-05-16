@@ -7,6 +7,7 @@ class ContextMenuBridge {
         this.items = [];
     }
     listen() {
+        console.log(123);
         window.addEventListener('contextmenu', (e) => {
             e.preventDefault();
             let context = this.generateMenuContext(e);
@@ -15,8 +16,9 @@ class ContextMenuBridge {
         })
     }
 
-    addItem(label, condition) {
-        this.items.push({ label, condition });
+    setItems(items) {
+        this.items = [];
+        items.forEach(item => this.items.push({ label: item.label, condition: item.condition }));
     }
 
     getNeededItems(context) {
@@ -43,11 +45,11 @@ module.exports = [
         type: 'on',
     },
     {
-        id: 'addConTextMenuItem',
-        label: 'api:menu:addConTextMenuItem',
+        id: 'setContextMenuItems',
+        label: 'api:menu:setContextMenuItems',
         type: 'fn',
-        fn(item) {
-            bridge.addItem(item.label, item.condition);
+        fn(items) {
+            bridge.setItems(items);
         }
     }
 ]

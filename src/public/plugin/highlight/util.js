@@ -45,21 +45,6 @@ export class util {
         return range.getBoundingClientRect();
     }
 
-    static getFirstTextNode(node) {
-        for (var i = 0; i < node.childNodes.length; i++) {
-            var childNode = node.childNodes[i];
-            if (childNode.nodeType === Node.TEXT_NODE && childNode.nodeValue.trim() !== '') {
-                return childNode;
-            } else if (childNode.nodeType === Node.ELEMENT_NODE) {
-                var result = util.getFirstTextNode(childNode);
-                if (result) {
-                    return result;
-                }
-            }
-        }
-        return null;
-    }
-
     static getTextNodesByDfs(start, end) {
         if (start === end) return [start];
         const iterator = util.nodeDfsGenerator(start, false);
