@@ -38,9 +38,6 @@ const project = {
     getSnapshotPath() {
         return path.join(_APP_PROJECTS_DIR_PATH_, this.projectId, 'snapshot.xml');
     },
-    getProjectNotePath() {
-        return path.join(_APP_PROJECTS_DIR_PATH_, this.projectId, 'note.xml');
-    },
     getProjectNoteDir() {
         return path.join(_APP_PROJECTS_DIR_PATH_, this.projectId, 'note');
     },
@@ -72,8 +69,8 @@ const project = {
         this.snapshotStorage.set('openedFile', filepath);
         let filename = path.basename(filepath);
         if (!this.noteStorages.hasOwnProperty(filename)) {
-            let notepath = path.join(this.getProjectNoteDir(), filename + '.xml');
-            this.noteStorages[filename] = storage.new('project:note:' + filename, notepath);
+            let notePath = path.join(this.getProjectNoteDir(), filename + '.xml');
+            this.noteStorages[filename] = storage.new('project:note:' + filename, notePath);
         }
         this.noteStorage = this.noteStorages[filename];
     },
